@@ -1,6 +1,7 @@
 package com.fernando.connected_minds_api.services;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
@@ -26,10 +27,11 @@ public class JWTService {
                 .sign(HMAC256(jwtSecretKey));
     }
 
-    public String generateRefreshToken() {
+    public String generateRefreshToken(String userID) {
         return JWT
                 .create()
                 .withIssuer(ISSUER)
+                .withSubject(userID)
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(generateRefreshTokenExpirationDate())
                 .sign(HMAC256(jwtSecretKey));
@@ -49,8 +51,20 @@ public class JWTService {
         }
     }
 
+    public boolean isValidToken(String token) {
+        try {
+            JWT.require(HMAC256(jwtSecretKey))
+                    .build()
+                    .verify(token);
+            return true;
+        }
+        catch (JWTVerificationException exception) {
+            return false;
+        }
+    }
+
     private Instant generateRefreshTokenExpirationDate() {
-        return LocalDateTime.now().plusDays(7).toInstant(
+        return LocalDateTime.now().plusMonths(1).toInstant(
                 ZoneOffset.of("-03:00")
         );
     }
