@@ -1,5 +1,6 @@
 package com.fernando.connected_minds_api.requests;
 
+import com.fernando.connected_minds_api.annotations.EnumValidator;
 import com.fernando.connected_minds_api.enums.UserGenre;
 import com.fernando.connected_minds_api.models.User;
 import jakarta.validation.constraints.Email;
@@ -24,9 +25,8 @@ public record RegisterRequest(
         String bannerURL,
 
         @NotNull(message = "genre is required")
-        @NotEmpty(message = "genre not should be empty")
-        @Pattern(regexp = "Male|Female", message = "User genre should be Male or Female")
-        UserGenre genre,
+        @EnumValidator(enumValues = {"MALE", "FEMALE"}, message = "User genre should be MALE or FEMALE")
+        String genre,
 
         @NotNull(message = "birthDate is required")
         @NotEmpty(message = "birthDate not should be empty")
@@ -35,6 +35,6 @@ public record RegisterRequest(
     public User toEntity() {
         LocalDate birthDateFormatted = LocalDate.parse(birthDate);
         return new User(username, email, password,
-                birthDateFormatted, photoURL, bannerURL, genre);
+                birthDateFormatted, photoURL, bannerURL, UserGenre.valueOf(genre));
     }
 }
