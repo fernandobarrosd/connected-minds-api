@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service
@@ -54,8 +53,9 @@ public class AuthService implements UserDetailsService {
         User user = (User) auth.getPrincipal();
         String token = jwtService.generateJWT(loginRequest.email());
         String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
+        String expiresAt = jwtService.getExpiresAt(token).get();
 
-        return new AuthResponse(token, refreshToken);
+        return new AuthResponse(token, refreshToken, expiresAt);
     }
 
     public AuthResponse generateNewToken(RefreshTokenRequest request) {
@@ -70,8 +70,9 @@ public class AuthService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException("User is not exists"));
 
         String newToken = jwtService.generateJWT(user.getEmail());
+        String expiresAt = jwtService.getExpiresAt(newToken).get();
 
-        return new AuthResponse(newToken, refreshToken);
+        return new AuthResponse(newToken, refreshToken, expiresAt);
 
     }
 
