@@ -29,6 +29,9 @@ public class Community extends BaseEntity {
     @OneToMany
     private List<Post> posts;
 
+    @OneToMany
+    private List<Message> messages;
+
     @OneToMany(mappedBy = "community")
     private List<Group> groups;
 
@@ -50,6 +53,7 @@ public class Community extends BaseEntity {
         this.description = description;
         this.photoURL = photoURL;
         this.bannerURL = bannerURL;
+        this.messages = List.of();
         this.members = List.of();
         this.admins = List.of(admin);
         this.posts = List.of();
