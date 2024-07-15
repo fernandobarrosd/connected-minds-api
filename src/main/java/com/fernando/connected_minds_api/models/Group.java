@@ -35,6 +35,9 @@ public class Group extends BaseEntity {
     @JoinColumn(name = "community_id", nullable = false)
     private Community community;
 
+    @OneToMany
+    private List<Message> messages;
+
     @ManyToMany
     private List<User> members;
 
@@ -54,6 +57,7 @@ public class Group extends BaseEntity {
         this.photoURL = photoURL;
         this.bannerURL = bannerURL;
         this.community = community;
+        this.messages = List.of();
         this.members = List.of();
         this.admins = List.of(admin);
         this.posts = List.of();
