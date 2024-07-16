@@ -40,6 +40,10 @@ public class Group extends BaseEntity {
     @ManyToMany
     private List<User> members;
 
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(nullable = false)
+    private List<Tag> tags;
+
     @ManyToMany
     @JoinTable(
             name = "group_admin",
@@ -49,13 +53,14 @@ public class Group extends BaseEntity {
     private List<User> admins;
 
     public Group(UUID id, String name, String description, String photoURL,
-                 String bannerURL, User admin, Community community) {
+                 String bannerURL, User admin, Community community, List<Tag> tags) {
         super(id);
         this.name = name;
         this.description = description;
         this.photoURL = photoURL;
         this.bannerURL = bannerURL;
         this.community = community;
+        this.tags = tags;
         this.messages = List.of();
         this.members = List.of();
         this.admins = List.of(admin);
