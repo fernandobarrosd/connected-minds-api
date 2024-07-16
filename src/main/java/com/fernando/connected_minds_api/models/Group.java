@@ -28,7 +28,6 @@ public class Group extends BaseEntity {
     private String bannerURL;
 
     @OneToMany
-    @JoinColumn(name = "post_id", nullable = false)
     private List<Post> posts;
 
     @ManyToOne
