@@ -1,5 +1,6 @@
 package com.fernando.connected_minds_api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fernando.connected_minds_api.enums.UserGenre;
 import com.fernando.connected_minds_api.enums.UserStatus;
 import com.fernando.connected_minds_api.enums.converters.UserGenreConverter;
@@ -19,6 +20,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({ "communities", "groups" })
 public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String username;
