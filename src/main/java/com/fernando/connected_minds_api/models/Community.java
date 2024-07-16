@@ -38,6 +38,10 @@ public class Community extends BaseEntity {
     @ManyToMany
     private List<User> members;
 
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(nullable = false)
+    private List<Tag> tags;
+
     @ManyToMany
     @JoinTable(
             name = "community_admin",
@@ -47,12 +51,13 @@ public class Community extends BaseEntity {
     private List<User> admins;
 
     public Community(UUID id, String name, String description, String photoURL, String bannerURL,
-                     User admin) {
+                     User admin, List<Tag> tags) {
         super(id);
         this.name = name;
         this.description = description;
         this.photoURL = photoURL;
         this.bannerURL = bannerURL;
+        this.tags = tags;
         this.messages = List.of();
         this.members = List.of();
         this.admins = List.of(admin);
