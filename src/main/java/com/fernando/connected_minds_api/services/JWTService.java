@@ -1,12 +1,12 @@
 package com.fernando.connected_minds_api.services;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.Optional;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
 
@@ -51,6 +51,20 @@ public class JWTService {
         }
     }
 
+    public Optional<String> getExpiresAt(String token) {
+        try {
+            Date expiresAt = JWT
+                    .require(HMAC256(jwtSecretKey))
+                    .build()
+                    .verify(token)
+                    .getExpiresAt();
+            return Optional.of(expiresAt.toString());
+        }
+        catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     public boolean isValidToken(String token) {
         try {
             JWT.require(HMAC256(jwtSecretKey))
@@ -58,7 +72,7 @@ public class JWTService {
                     .verify(token);
             return true;
         }
-        catch (JWTVerificationException exception) {
+        catch (Exception exception) {
             return false;
         }
     }
