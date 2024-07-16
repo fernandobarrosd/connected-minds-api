@@ -21,10 +21,11 @@ public class Comment extends BaseEntity {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "onwer_id")
+    @JoinColumn(name = "onwer_id", nullable = false)
     private User owner;
 
     @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @OneToMany
