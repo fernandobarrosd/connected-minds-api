@@ -1,5 +1,7 @@
 package com.fernando.connected_minds_api.responses;
 
+import com.fernando.connected_minds_api.models.Post;
+import com.fernando.connected_minds_api.models.User;
 import lombok.Builder;
 
 @Builder
@@ -9,10 +11,28 @@ public record PostResponse(
         String createdAt,
         String photoURL,
         Long likes,
-        Owner owner) {
+        OwnerResponse owner) {
+
+    public static PostResponse fromEntity(Post post) {
+        User owner = post.getOwner();
+
+        OwnerResponse ownerResponse = OwnerResponse.builder()
+                .id(owner.getId().toString())
+                .username(owner.getUsername())
+                .photoURL(owner.getPhotoURL())
+                .build();
+
+        return PostResponse.builder()
+                .id(post.getId().toString())
+                .content(post.getContent())
+                .likes(post.getLikes())
+                .photoURL(post.getPhotoURL())
+                .owner(ownerResponse)
+                .build();
+    }
 
     @Builder
-    public record Owner(
+    public record OwnerResponse(
             String id,
             String username,
             String photoURL) {}
