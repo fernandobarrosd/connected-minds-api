@@ -41,7 +41,7 @@ public class Group extends BaseEntity {
     private List<User> members;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "group_tag_id", nullable = false)
     private List<Tag> tags;
 
     @ManyToMany
