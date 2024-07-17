@@ -28,6 +28,7 @@ public record PostResponse(
                 .likes(post.getLikes())
                 .photoURL(post.getPhotoURL())
                 .owner(ownerResponse)
+                .createdAt(post.getCreatedAt().toString())
                 .build();
     }
 
