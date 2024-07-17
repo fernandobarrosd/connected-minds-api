@@ -50,9 +50,9 @@ public class Community extends BaseEntity {
     )
     private List<User> admins;
 
-    public Community(UUID id, String name, String description, String photoURL, String bannerURL,
+    public Community(String name, String description, String photoURL, String bannerURL,
                      User admin, List<Tag> tags) {
-        super(id);
+        super(null);
         this.name = name;
         this.description = description;
         this.photoURL = photoURL;
