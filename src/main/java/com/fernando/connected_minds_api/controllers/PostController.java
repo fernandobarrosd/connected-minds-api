@@ -7,10 +7,8 @@ import com.fernando.connected_minds_api.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/posts")
@@ -23,5 +21,10 @@ public class PostController {
             @AuthenticationPrincipal User user,
             @RequestBody PostRequest postRequest) {
         return ResponseEntity.created(null).body(postService.createPost(postRequest, user));
+    }
+
+    @GetMapping("/{postID}")
+    public ResponseEntity<PostResponse> findPostByID(@PathVariable UUID postID) {
+        return ResponseEntity.ok(postService.findPostByID(postID));
     }
 }
