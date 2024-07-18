@@ -3,6 +3,7 @@ package com.fernando.connected_minds_api.controllers;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
+import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
@@ -37,6 +38,13 @@ public class PostController {
         postService.deletePost(postID);
     }
 
+    @PatchMapping("/{postID}")
+    public ResponseEntity<PostResponse> updatePost(
+            @PathVariable UUID postID,
+            @RequestBody UpdatePostRequest postRequest) {
+        return ResponseEntity.ok(postService.updatePost(postID, postRequest));
+    }
+
     @PostMapping("/{postID}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @AuthenticationPrincipal User user,
@@ -45,6 +53,4 @@ public class PostController {
 
         return ResponseEntity.created(null).body(postService.createComment(user, postID, commentRequest));
     }
-
-
 }
