@@ -8,6 +8,7 @@ import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.repositories.PostRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
+import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,19 @@ public class PostService {
             throw new EntityNotFoundException("Post is not exists");
         }
         postRepository.deleteById(postID);
+    }
+
+    public PostResponse updatePost(UUID postID, UpdatePostRequest postRequest) {
+        Post post = postRepository.findById(postID)
+                .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
+
+        if (postRequest.content() != null) {
+            post.setContent(postRequest.content());
+        }
+        if (postRequest.photoURL() != null) {
+            post.setPhotoURL(postRequest.photoURL());
+        }
+        postRepository.save(post);
+        return PostResponse.fromEntity(post);
     }
 }
