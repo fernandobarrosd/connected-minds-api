@@ -71,4 +71,11 @@ public class PostService {
                 .postID(post.getId())
                 .build();
     }
+
+    public void deletePost(UUID postID) {
+        if (!postRepository.existsById(postID)) {
+            throw new EntityNotFoundException("Post is not exists");
+        }
+        postRepository.deleteById(postID);
+    }
 }
