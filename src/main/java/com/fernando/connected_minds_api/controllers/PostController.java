@@ -1,7 +1,9 @@
 package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
+import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +28,14 @@ public class PostController {
     @GetMapping("/{postID}")
     public ResponseEntity<PostResponse> findPostByID(@PathVariable UUID postID) {
         return ResponseEntity.ok(postService.findPostByID(postID));
+    }
+
+    @PostMapping("/{postID}/comments")
+    public ResponseEntity<CommentResponse> createComment(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID postID,
+            @RequestBody CommentRequest commentRequest) {
+
+        return ResponseEntity.created(null).body(postService.createComment(user, postID, commentRequest));
     }
 }
