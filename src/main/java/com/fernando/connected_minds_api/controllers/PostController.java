@@ -7,6 +7,7 @@ import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,12 @@ public class PostController {
         return ResponseEntity.ok(postService.findPostByID(postID));
     }
 
+    @DeleteMapping("/{postID}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePost(@PathVariable UUID postID) {
+        postService.deletePost(postID);
+    }
+
     @PostMapping("/{postID}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @AuthenticationPrincipal User user,
@@ -38,4 +45,6 @@ public class PostController {
 
         return ResponseEntity.created(null).body(postService.createComment(user, postID, commentRequest));
     }
+
+
 }
