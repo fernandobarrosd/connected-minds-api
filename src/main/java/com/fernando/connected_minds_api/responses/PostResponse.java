@@ -3,10 +3,11 @@ package com.fernando.connected_minds_api.responses;
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
 import lombok.Builder;
+import java.util.UUID;
 
 @Builder
 public record PostResponse(
-        String id,
+        UUID id,
         String content,
         String createdAt,
         String photoURL,
@@ -17,13 +18,13 @@ public record PostResponse(
         User owner = post.getOwner();
 
         OwnerResponse ownerResponse = OwnerResponse.builder()
-                .id(owner.getId().toString())
+                .id(owner.getId())
                 .username(owner.getUsername())
                 .photoURL(owner.getPhotoURL())
                 .build();
 
         return PostResponse.builder()
-                .id(post.getId().toString())
+                .id(post.getId())
                 .content(post.getContent())
                 .likes(post.getLikes())
                 .photoURL(post.getPhotoURL())
@@ -31,10 +32,4 @@ public record PostResponse(
                 .createdAt(post.getCreatedAt().toString())
                 .build();
     }
-
-    @Builder
-    public record OwnerResponse(
-            String id,
-            String username,
-            String photoURL) {}
 }
