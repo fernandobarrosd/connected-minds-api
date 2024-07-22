@@ -6,7 +6,6 @@ import com.fernando.connected_minds_api.models.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public record RegisterRequest(
@@ -21,7 +20,13 @@ public record RegisterRequest(
         @NotNull(message = "password is required")
         @NotEmpty(message = "password not should be empty")
         String password,
+
+        @NotNull(message = "photoURL is required")
+        @NotEmpty(message = "photoURL not should be empty")
         String photoURL,
+
+        @NotNull(message = "bannerURL is required")
+        @NotEmpty(message = "bannerURL not should be empty")
         String bannerURL,
 
         @NotNull(message = "genre is required")
