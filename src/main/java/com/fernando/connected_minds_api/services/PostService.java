@@ -14,6 +14,7 @@ import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +92,8 @@ public class PostService {
     }
 
     public List<CommentResponse> findAllComments(UUID postID, Integer page, Integer itemsPerPage) {
-        Pageable pageable = PageRequest.of(page, itemsPerPage);
+        Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
+
         return commentRepository.findAllByPostId(postID, pageable)
                 .stream()
                 .map(CommentResponse::fromEntity)
