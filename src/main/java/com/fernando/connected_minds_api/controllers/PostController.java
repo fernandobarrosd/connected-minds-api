@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,5 +53,14 @@ public class PostController {
             @RequestBody CommentRequest commentRequest) {
 
         return ResponseEntity.created(null).body(postService.createComment(user, postID, commentRequest));
+    }
+
+    @GetMapping("/{postID}/comments")
+    public ResponseEntity<List<CommentResponse>> findAllComments(
+            @PathVariable UUID postID,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer itemsPerPage) {
+
+        return ResponseEntity.ok(postService.findAllComments(postID, page, itemsPerPage));
     }
 }
