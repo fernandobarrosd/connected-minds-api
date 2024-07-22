@@ -87,6 +87,11 @@ public class AuthService implements UserDetailsService {
         catch (Exception exception) {
             throw new EntityAlreadyExistsException("User is already exists");
         }
-        return authenticate(new LoginRequest(request.email(), request.password()));
+        String token = jwtService.generateJWT(user.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
+        String expiresAt = jwtService.getExpiresAt(token).get();
+
+        return new AuthResponse(token, refreshToken, expiresAt);
+
     }
 }
