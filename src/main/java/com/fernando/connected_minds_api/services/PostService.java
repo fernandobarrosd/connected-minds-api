@@ -12,7 +12,10 @@ import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,14 +66,7 @@ public class PostService {
 
         commentRepository.save(comment);
 
-        return CommentResponse.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .likes(comment.getLikes())
-                .createdAt(comment.getCreatedAt().toString())
-                .ownerID(user.getId())
-                .postID(post.getId())
-                .build();
+        return CommentResponse.fromEntity(comment);
     }
 
     public void deletePost(UUID postID) {
@@ -92,5 +88,13 @@ public class PostService {
         }
         postRepository.save(post);
         return PostResponse.fromEntity(post);
+    }
+
+    public List<CommentResponse> findAllComments(UUID postID, Integer page, Integer itemsPerPage) {
+        Pageable pageable = PageRequest.of(page, itemsPerPage);
+        return commentRepository.findAllByPostId(postID, pageable)
+                .stream()
+                .map(CommentResponse::fromEntity)
+                .toList();
     }
 }
