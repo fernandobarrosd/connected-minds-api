@@ -51,7 +51,7 @@ public class PostService {
         Post post = postRepository.findById(postID)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
 
-        Comment comment = new Comment(commentRequest.content(), user, post);
+        Comment comment = new Comment(commentRequest.content(), null, user, post);
 
         commentRepository.save(comment);
 
