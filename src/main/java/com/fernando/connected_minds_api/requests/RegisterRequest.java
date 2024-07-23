@@ -22,11 +22,9 @@ public record RegisterRequest(
         String password,
 
         @NotNull(message = "photoURL is required")
-        @NotEmpty(message = "photoURL not should be empty")
         String photoURL,
 
         @NotNull(message = "bannerURL is required")
-        @NotEmpty(message = "bannerURL not should be empty")
         String bannerURL,
 
         @NotNull(message = "genre is required")
