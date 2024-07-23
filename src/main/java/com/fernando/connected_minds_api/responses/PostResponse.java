@@ -14,7 +14,7 @@ public record PostResponse(
         Long likes,
         OwnerResponse owner) {
 
-    public static PostResponse fromEntity(Post post) {
+    public static PostResponse toResponse(Post post) {
         User owner = post.getOwner();
 
         OwnerResponse ownerResponse = OwnerResponse.builder()
