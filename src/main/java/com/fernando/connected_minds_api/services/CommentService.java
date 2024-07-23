@@ -50,7 +50,7 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
 
         Comment commentOfComment = new Comment(commentRequest.content(), owner, comment.getPost());
-        commentRepository.save(comment);
+        commentRepository.save(commentOfComment);
 
         return CommentResponse.toResponse(commentOfComment);
     }
