@@ -6,7 +6,6 @@
 
 - O usuário poder se autenticar
 - O usuário poder criar uma conta
-- O usuário pode se autenticar ou criar uma conta com o Google
 
 ### Posts
 
