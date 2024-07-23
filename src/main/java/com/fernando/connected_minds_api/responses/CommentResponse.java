@@ -13,7 +13,7 @@ public record CommentResponse(
         String createdAt,
         OwnerResponse owner,
         UUID postID) {
-    public static CommentResponse fromEntity(Comment comment) {
+    public static CommentResponse toResponse(Comment comment) {
         User owner = comment.getOwner();
 
         var ownerResponse = OwnerResponse.builder()
