@@ -28,18 +28,22 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @OneToMany(mappedBy = "comment")
     private List<Comment> comments;
 
     @Column(nullable = false)
     private Long likes;
 
-    public Comment(String content, User owner, Post post) {
+    public Comment(String content, Comment comment, User owner, Post post) {
         super(null);
         this.content = content;
         this.owner = owner;
         this.post = post;
+        this.comment = comment;
         this.createdAt = LocalDateTime.now();
         this.likes = 0L;
         this.comments = List.of();
