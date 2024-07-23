@@ -10,6 +10,7 @@ import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
+import com.fernando.connected_minds_api.responses.OwnerResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -34,20 +35,7 @@ public class PostService {
         );
         postRepository.save(post);
 
-        var ownerResponse = PostResponse.OwnerResponse.builder()
-                .id(owner.getId().toString())
-                .username(owner.getUsername())
-                .photoURL(owner.getPhotoURL())
-                .build();
-
-        return PostResponse.builder()
-                .id(post.getId().toString())
-                .likes(post.getLikes())
-                .content(post.getContent())
-                .createdAt(post.getCreatedAt().toString())
-                .photoURL(post.getPhotoURL())
-                .owner(ownerResponse)
-                .build();
+        return PostResponse.toResponse(post);
     }
 
     public PostResponse findPostByID(UUID postID) {
@@ -56,7 +44,7 @@ public class PostService {
             throw new EntityNotFoundException("Post is not exists");
         }
         Post post = postOptional.get();
-        return PostResponse.fromEntity(post);
+        return PostResponse.toResponse(post);
     }
 
     public CommentResponse createComment(User user, UUID postID, CommentRequest commentRequest) {
@@ -67,7 +55,7 @@ public class PostService {
 
         commentRepository.save(comment);
 
-        return CommentResponse.fromEntity(comment);
+        return CommentResponse.toResponse(comment);
     }
 
     public void deletePost(UUID postID) {
@@ -88,7 +76,7 @@ public class PostService {
             post.setPhotoURL(postRequest.photoURL());
         }
         postRepository.save(post);
-        return PostResponse.fromEntity(post);
+        return PostResponse.toResponse(post);
     }
 
     public List<CommentResponse> findAllComments(UUID postID, Integer page, Integer itemsPerPage) {
@@ -96,7 +84,7 @@ public class PostService {
 
         return commentRepository.findAllByPostId(postID, pageable)
                 .stream()
-                .map(CommentResponse::fromEntity)
+                .map(CommentResponse::toResponse)
                 .toList();
     }
 }
