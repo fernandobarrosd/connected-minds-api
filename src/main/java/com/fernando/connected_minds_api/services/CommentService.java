@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -21,10 +20,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public void deleteComment(UUID commentID) {
-        if (!commentRepository.existsById(commentID)) {
-            throw new EntityNotFoundException("Comment is not exists");
-        }
-        commentRepository.deleteById(commentID);
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+        comment.setComment(null);
+        commentRepository.delete(comment);
     }
 
     public CommentResponse findCommentById(UUID commentID) {
@@ -44,7 +43,6 @@ public class CommentService {
                 .map(CommentResponse::toResponse)
                 .toList();
     }
-
     public CommentResponse createCommentOfComment(UUID commentID, CommentRequest commentRequest, User owner) {
         Comment comment = commentRepository.findById(commentID)
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
