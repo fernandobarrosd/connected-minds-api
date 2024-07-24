@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,11 +29,11 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", orphanRemoval = true)
     private List<Comment> comments;
 
     @Column(nullable = false)
@@ -46,6 +47,16 @@ public class Comment extends BaseEntity {
         this.comment = comment;
         this.createdAt = LocalDateTime.now();
         this.likes = 0L;
-        this.comments = List.of();
+        this.comments = new ArrayList<>();
+    }
+
+    public Comment(String content, User owner, Post post) {
+        super(null);
+        this.content = content;
+        this.owner = owner;
+        this.post = post;
+        this.createdAt = LocalDateTime.now();
+        this.likes = 0L;
+        this.comments = new ArrayList<>();
     }
 }
