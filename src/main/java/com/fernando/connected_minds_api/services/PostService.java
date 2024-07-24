@@ -10,7 +10,6 @@ import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
-import com.fernando.connected_minds_api.responses.OwnerResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +50,7 @@ public class PostService {
         Post post = postRepository.findById(postID)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
 
-        Comment comment = new Comment(commentRequest.content(), null, user, post);
+        Comment comment = new Comment(commentRequest.content(), user, post);
 
         commentRepository.save(comment);
 
@@ -80,6 +79,9 @@ public class PostService {
     }
 
     public List<CommentResponse> findAllComments(UUID postID, Integer page, Integer itemsPerPage) {
+        if (!postRepository.existsById(postID)) {
+            throw new EntityNotFoundException("Post is not exists");
+        }
         Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
 
         return commentRepository.findAllByPostId(postID, pageable)
