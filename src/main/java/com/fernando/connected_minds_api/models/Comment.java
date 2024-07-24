@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,7 +46,7 @@ public class Comment extends BaseEntity {
         this.comment = comment;
         this.createdAt = LocalDateTime.now();
         this.likes = 0L;
-        this.comments = new ArrayList<>();
+        this.comments = List.of();
     }
 
     public Comment(String content, User owner, Post post) {
@@ -57,6 +56,6 @@ public class Comment extends BaseEntity {
         this.post = post;
         this.createdAt = LocalDateTime.now();
         this.likes = 0L;
-        this.comments = new ArrayList<>();
+        this.comments = List.of();
     }
 }
