@@ -30,7 +30,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Long likes;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments;
 
     public Post(String content, String photoURL, User owner) {
