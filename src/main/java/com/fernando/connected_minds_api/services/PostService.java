@@ -74,6 +74,9 @@ public class PostService {
         if (postRequest.photoURL() != null) {
             post.setPhotoURL(postRequest.photoURL());
         }
+        if (postRequest.likes() != null) {
+            post.setLikes(postRequest.likes());
+        }
         postRepository.save(post);
         return PostResponse.toResponse(post);
     }
