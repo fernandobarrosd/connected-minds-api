@@ -5,6 +5,7 @@ import com.fernando.connected_minds_api.models.Comment;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
+import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -51,5 +52,21 @@ public class CommentService {
         commentRepository.save(commentOfComment);
 
         return CommentResponse.toResponse(commentOfComment);
+    }
+
+    public CommentResponse updateComment(UUID commentID, UpdateCommentRequest commentRequest) {
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+
+        if (commentRequest.content() != null) {
+            comment.setContent(commentRequest.content());
+        }
+        if (commentRequest.likes() != null) {
+            comment.setLikes(commentRequest.likes());
+        }
+
+        commentRepository.save(comment);
+
+        return CommentResponse.toResponse(comment);
     }
 }
