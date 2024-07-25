@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
-    List<Comment> findAllByPostId(UUID postId, Pageable pageable);
+    @Query("SELECT c FROM Comment c WHERE c.post.id = :postID AND c.comment IS null")
+    List<Comment> findAllByPostId(UUID postID, Pageable pageable);
 
     @Query("SELECT c.comments FROM Comment c WHERE c.id = :commentID")
     List<Comment> findAllCommentsOfComment(UUID commentID, Pageable pageable);
