@@ -2,6 +2,7 @@ package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
+import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.services.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,13 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findCommentById(commentID));
     }
 
+    @PatchMapping("/{commentID}")
+    public ResponseEntity<CommentResponse> updateComment(
+            @PathVariable UUID commentID,
+            @RequestBody UpdateCommentRequest commentRequest) {
+        return ResponseEntity.ok(commentService.updateComment(commentID, commentRequest));
+    }
+
     @PostMapping("/{commentID}/comments")
     public ResponseEntity<CommentResponse> createCommentOfComment(
             @AuthenticationPrincipal User owner,
@@ -37,6 +45,7 @@ public class CommentController {
 
         return ResponseEntity.created(null).body(commentService.createCommentOfComment(commentID, commentRequest, owner));
     }
+
 
     @GetMapping("/{commentID}/comments")
     public ResponseEntity<List<CommentResponse>> findAllCommentsOfComment(
