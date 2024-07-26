@@ -4,7 +4,7 @@ import com.fernando.connected_minds_api.models.Tag;
 
 public record TagResponse(String id, String name) {
 
-    public static TagResponse fromEntity(Tag tag) {
+    public static TagResponse toResponse(Tag tag) {
         return new TagResponse(tag.getId().toString(), tag.getName());
     }
 }
