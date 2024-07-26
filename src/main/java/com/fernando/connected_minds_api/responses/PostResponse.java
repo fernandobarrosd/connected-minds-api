@@ -17,11 +17,7 @@ public record PostResponse(
     public static PostResponse toResponse(Post post) {
         User owner = post.getOwner();
 
-        OwnerResponse ownerResponse = OwnerResponse.builder()
-                .id(owner.getId())
-                .username(owner.getUsername())
-                .photoURL(owner.getPhotoURL())
-                .build();
+        OwnerResponse ownerResponse = OwnerResponse.toResponse(owner);
 
         return PostResponse.builder()
                 .id(post.getId())
