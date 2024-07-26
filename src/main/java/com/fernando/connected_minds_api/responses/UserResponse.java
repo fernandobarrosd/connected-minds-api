@@ -12,7 +12,7 @@ public record UserResponse(
         String bio,
         String photoURL,
         String bannerURL) {
-    public static UserResponse fromEntity(User user) {
+    public static UserResponse toResponse(User user) {
         Boolean isOnline = user.getStatus() == UserStatus.ONLINE;
 
         return new UserResponse(
