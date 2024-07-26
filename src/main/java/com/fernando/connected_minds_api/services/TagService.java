@@ -14,7 +14,7 @@ public class TagService {
     public List<TagResponse> findAllTags() {
         return tagRepository.findAll()
                 .stream()
-                .map(TagResponse::fromEntity)
+                .map(TagResponse::toResponse)
                 .toList();
     }
 }
