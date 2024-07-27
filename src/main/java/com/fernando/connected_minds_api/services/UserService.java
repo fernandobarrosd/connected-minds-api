@@ -17,6 +17,6 @@ public class UserService {
                 .findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("%s is not exists".formatted(username)));
 
-        return UserResponse.fromEntity(user);
+        return UserResponse.toResponse(user);
     }
 }
