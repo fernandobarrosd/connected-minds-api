@@ -32,6 +32,6 @@ public class CommunityService {
 
       communityRepository.save(community);
 
-      return CommunityResponse.toResponse(community, owner, communityRequest.tags());
+      return CommunityResponse.toResponse(community, communityRequest.tags());
    }
 }
