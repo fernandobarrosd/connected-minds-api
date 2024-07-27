@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,9 @@ public class Community extends BaseEntity {
     @Column(nullable = false, name = "banner_url")
     private String bannerURL;
 
+    @Column(nullable = false, name = "created_at")
+    private LocalDateTime createdAt;
+
     @OneToMany
     private List<Post> posts;
 
@@ -35,7 +39,7 @@ public class Community extends BaseEntity {
     private List<User> members;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "community_tag_id", nullable = false)
+    @JoinColumn(name = "community_tag_id")
     private List<Tag> tags;
 
     @ManyToMany
@@ -54,6 +58,7 @@ public class Community extends BaseEntity {
         this.photoURL = photoURL;
         this.bannerURL = bannerURL;
         this.tags = tags;
+        this.createdAt = LocalDateTime.now();
         this.members = List.of();
         this.admins = List.of(admin);
         this.posts = List.of();
