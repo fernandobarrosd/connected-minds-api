@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,15 +32,18 @@ public class Group extends BaseEntity {
     private List<Post> posts;
 
     @ManyToOne
-    @JoinColumn(name = "community_id", nullable = false)
+    @JoinColumn(name = "community_id")
     private Community community;
 
     @ManyToMany
     private List<User> members;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "group_tag_id", nullable = false)
+    @JoinColumn(name = "group_tag_id")
     private List<Tag> tags;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToMany
     @JoinTable(
@@ -60,6 +65,7 @@ public class Group extends BaseEntity {
         this.members = List.of();
         this.admins = List.of(admin);
         this.posts = List.of();
+        this.createdAt = LocalDateTime.now();
 
     }
 }
