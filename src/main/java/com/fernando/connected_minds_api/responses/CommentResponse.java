@@ -16,12 +16,7 @@ public record CommentResponse(
     public static CommentResponse toResponse(Comment comment) {
         User owner = comment.getOwner();
 
-        var ownerResponse = OwnerResponse.builder()
-                .id(owner.getId())
-                .username(owner.getUsername())
-                .photoURL(owner.getPhotoURL())
-                .build();
-
+        var ownerResponse = OwnerResponse.toResponse(owner);
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
