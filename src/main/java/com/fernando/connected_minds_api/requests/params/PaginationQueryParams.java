@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaginationQueryParams {
-    @PositiveOrZero(message = "The page should be positive number")
+    @PositiveOrZero(message = "page should be positive number")
     private Integer page = 0;
 
-    @PositiveOrZero(message = "The page should be positive number")
+    @PositiveOrZero(message = "page should be positive number")
     private  Integer itemsPerPage = 5;
 }
