@@ -12,7 +12,7 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
 
 @Service
 public class JWTService {
-    @Value("${jwt.secret.key}")
+    @Value("${spring.security.secret-key}")
     private String jwtSecretKey;
 
     private final static String ISSUER = "Connected Minds API Authentication";
