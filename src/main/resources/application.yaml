@@ -1,0 +1,13 @@
+spring:
+  application:
+      name: connected-minds-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/connected_minds_db
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  security:
+    secret-key: secret
