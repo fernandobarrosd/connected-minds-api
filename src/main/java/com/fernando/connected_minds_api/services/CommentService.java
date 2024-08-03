@@ -6,6 +6,7 @@ import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
+import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,13 +21,6 @@ import java.util.UUID;
 public class CommentService {
     private final CommentRepository commentRepository;
 
-    public void deleteComment(UUID commentID) {
-        Comment comment = commentRepository.findById(commentID)
-                .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
-        comment.setComment(null);
-        commentRepository.delete(comment);
-    }
-
     public CommentResponse findCommentById(UUID commentID) {
         Comment comment = commentRepository.findById(commentID)
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
@@ -34,11 +28,18 @@ public class CommentService {
         return CommentResponse.toResponse(comment);
     }
 
-    public List<CommentResponse> findAllCommentsOfComment(UUID commentID, Integer page, Integer itemsPerPage) {
+    public void deleteComment(UUID commentID) {
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+        comment.setComment(null);
+        commentRepository.delete(comment);
+    }
+
+    public List<CommentResponse> findAllCommentsOfComment(UUID commentID, PaginationQueryParams pagination) {
         if (!commentRepository.existsById(commentID)) {
             throw new EntityNotFoundException("Comment is not exists");
         }
-        Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage(), Sort.by("likes").descending());
         return commentRepository.findAllCommentsOfComment(commentID, pageable)
                 .stream()
                 .map(CommentResponse::toResponse)
