@@ -3,6 +3,7 @@ package com.fernando.connected_minds_api.services;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.UserRepository;
+import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class UserService {
         return UserResponse.toResponse(user);
     }
 
-    public List<CommunityResponse> findAllUserCommunities(UUID userID, Integer page, Integer itemsPerPage) {
-        Pageable pageable = PageRequest.of(page, itemsPerPage);
+    public List<CommunityResponse> findAllUserCommunities(UUID userID, PaginationQueryParams pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage());
         return userRepository.findAllCommunities(userID, pageable)
                 .stream()
                 .map(CommunityResponse::toResponse)
