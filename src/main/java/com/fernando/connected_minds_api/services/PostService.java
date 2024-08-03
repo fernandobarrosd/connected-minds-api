@@ -9,6 +9,7 @@ import com.fernando.connected_minds_api.repositories.PostRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
+import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -81,11 +82,11 @@ public class PostService {
         return PostResponse.toResponse(post);
     }
 
-    public List<CommentResponse> findAllComments(UUID postID, Integer page, Integer itemsPerPage) {
+    public List<CommentResponse> findAllComments(UUID postID, PaginationQueryParams pagination) {
         if (!postRepository.existsById(postID)) {
             throw new EntityNotFoundException("Post is not exists");
         }
-        Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage(), Sort.by("likes").descending());
 
         return commentRepository.findAllByPostId(postID, pageable)
                 .stream()
