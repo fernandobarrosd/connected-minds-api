@@ -4,9 +4,11 @@ import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
+import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
             @AuthenticationPrincipal User user,
-            @RequestBody PostRequest postRequest) {
+            @RequestBody @Valid PostRequest postRequest) {
         return ResponseEntity.created(null).body(postService.createPost(postRequest, user));
     }
 
@@ -33,24 +35,26 @@ public class PostController {
         return ResponseEntity.ok(postService.findPostByID(postID));
     }
 
+    @PatchMapping("/{postID}")
+    public ResponseEntity<PostResponse> updatePost(
+            @PathVariable UUID postID,
+            @RequestBody @Valid UpdatePostRequest postRequest) {
+        return ResponseEntity.ok(postService.updatePost(postID, postRequest));
+    }
+
     @DeleteMapping("/{postID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable UUID postID) {
         postService.deletePost(postID);
     }
 
-    @PatchMapping("/{postID}")
-    public ResponseEntity<PostResponse> updatePost(
-            @PathVariable UUID postID,
-            @RequestBody UpdatePostRequest postRequest) {
-        return ResponseEntity.ok(postService.updatePost(postID, postRequest));
-    }
+
 
     @PostMapping("/{postID}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @AuthenticationPrincipal User user,
             @PathVariable UUID postID,
-            @RequestBody CommentRequest commentRequest) {
+            @RequestBody @Valid CommentRequest commentRequest) {
 
         return ResponseEntity.created(null).body(postService.createComment(user, postID, commentRequest));
     }
@@ -58,9 +62,8 @@ public class PostController {
     @GetMapping("/{postID}/comments")
     public ResponseEntity<List<CommentResponse>> findAllComments(
             @PathVariable UUID postID,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer itemsPerPage) {
+            @Valid PaginationQueryParams pagination) {
 
-        return ResponseEntity.ok(postService.findAllComments(postID, page, itemsPerPage));
+        return ResponseEntity.ok(postService.findAllComments(postID, pagination));
     }
 }
