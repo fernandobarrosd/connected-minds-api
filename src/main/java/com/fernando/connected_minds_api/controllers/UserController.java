@@ -1,9 +1,11 @@
 package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.UserResponse;
 import com.fernando.connected_minds_api.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,9 +26,8 @@ public class UserController {
     @GetMapping("/communities")
     public ResponseEntity<List<CommunityResponse>> findAllUserCommunities(
             @AuthenticationPrincipal User user,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer itemsPerPage) {
+            @Valid PaginationQueryParams pagination) {
         return ResponseEntity.ok(
-                userService.findAllUserCommunities(user.getId(), page, itemsPerPage));
+                userService.findAllUserCommunities(user.getId(), pagination));
     }
 }
