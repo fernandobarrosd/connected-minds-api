@@ -4,6 +4,7 @@ import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommunityRequest;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.services.CommunityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +22,7 @@ public class CommunityController {
     @PostMapping
     public ResponseEntity<CommunityResponse> createCommunity(
             @AuthenticationPrincipal User owner,
-            @RequestBody CommunityRequest communityRequest) {
+            @RequestBody @Valid CommunityRequest communityRequest) {
         return ResponseEntity.created(null).body(
                 communityService.createCommunity(communityRequest, owner));
     }
