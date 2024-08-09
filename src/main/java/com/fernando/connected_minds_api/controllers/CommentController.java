@@ -28,16 +28,19 @@ public class CommentController {
 
     @PatchMapping("/{commentID}")
     public ResponseEntity<CommentResponse> updateComment(
+            @AuthenticationPrincipal User owner,
             @PathVariable UUID commentID,
             @RequestBody @Valid UpdateCommentRequest commentRequest) {
-        return ResponseEntity.ok(commentService.updateComment(commentID, commentRequest));
+        return ResponseEntity.ok(commentService.updateComment(commentID, commentRequest, owner.getId()));
     }
 
 
     @DeleteMapping("/{commentID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable UUID commentID) {
-        commentService.deleteComment(commentID);
+    public void deleteComment(
+        @AuthenticationPrincipal User owner,
+        @PathVariable UUID commentID) {
+        commentService.deleteComment(commentID, owner.getId());
     }
 
     @PostMapping("/{commentID}/comments")
