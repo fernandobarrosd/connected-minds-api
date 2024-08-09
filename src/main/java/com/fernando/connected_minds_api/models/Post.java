@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "post_table")
@@ -33,11 +34,15 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments;
 
-    public Post(String content, String photoURL, User owner) {
+    @Column(name = "location_id", nullable = false)
+    private UUID locationID;
+
+    public Post(String content, String photoURL, UUID locationID, User owner) {
         super(null);
         this.content = content;
         this.photoURL = photoURL;
         this.owner = owner;
+        this.locationID = locationID;
         this.createdAt = LocalDateTime.now();
         this.likes = 0L;
         this.comments = List.of();
