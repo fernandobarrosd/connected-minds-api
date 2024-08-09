@@ -3,6 +3,7 @@ package com.fernando.connected_minds_api.handlers;
 import com.fernando.connected_minds_api.exceptions.EntityAlreadyExistsException;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
+import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.responses.error.ErrorResponse;
 import com.fernando.connected_minds_api.responses.error.ErrorResponseWithFields;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +41,21 @@ public class GlobalExceptionHandlers {
             HttpServletRequest request) {
 
         int statusCode = HttpStatus.BAD_REQUEST.value();
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(exception.getMessage())
+                .statusCode(statusCode)
+                .path(request.getRequestURI())
+                .date(LocalDateTime.now())
+                .build();
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(UserIsNotOwnerOfResourceException.class)
+    public ResponseEntity<ErrorResponse> handleUserIsNotOwnerOfResource(
+            UserIsNotOwnerOfResourceException exception,
+            HttpServletRequest request) {
+
+        int statusCode = HttpStatus.FORBIDDEN.value();
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(exception.getMessage())
                 .statusCode(statusCode)
