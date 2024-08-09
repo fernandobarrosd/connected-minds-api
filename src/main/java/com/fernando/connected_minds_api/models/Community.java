@@ -36,19 +36,16 @@ public class Community extends BaseEntity {
     private List<Group> groups;
 
     @ManyToMany
+    @JoinTable(
+            name = "community_user",
+            joinColumns = @JoinColumn(name = "community_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false)
+    )
     private List<User> members;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany
     @JoinColumn(name = "community_tag_id")
     private List<Tag> tags;
-
-    @ManyToMany
-    @JoinTable(
-            name = "community_admin",
-            joinColumns = @JoinColumn(name = "community_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "admin_id", nullable = false)
-    )
-    private List<User> admins;
 
     public Community(String name, String description, String photoURL, String bannerURL,
                      User admin, List<Tag> tags) {
@@ -59,8 +56,7 @@ public class Community extends BaseEntity {
         this.bannerURL = bannerURL;
         this.tags = tags;
         this.createdAt = LocalDateTime.now();
-        this.members = List.of();
-        this.admins = List.of(admin);
+        this.members = List.of(admin);
         this.posts = List.of();
         this.groups = List.of();
 
