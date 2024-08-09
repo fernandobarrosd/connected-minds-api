@@ -1,8 +1,6 @@
 package com.fernando.connected_minds_api.responses;
 
 import com.fernando.connected_minds_api.models.Community;
-import com.fernando.connected_minds_api.models.Tag;
-import com.fernando.connected_minds_api.models.User;
 import lombok.Builder;
 import java.util.List;
 import java.util.UUID;
@@ -19,8 +17,8 @@ public record CommunityResponse(
         Long groupsCount,
         Long postCount,
         Long adminsCount,
-        List<String> tags) {
-    public static CommunityResponse toResponse(Community community, List<String> tags) {
+        List<TagResponse> tags) {
+    public static CommunityResponse toResponse(Community community, List<TagResponse> tags) {
         return CommunityResponse.builder()
                 .id(community.getId())
                 .name(community.getName())
@@ -31,7 +29,7 @@ public record CommunityResponse(
                 .membersCount((long) community.getMembers().size())
                 .groupsCount((long) community.getGroups().size())
                 .postCount((long) community.getPosts().size())
-                .adminsCount((long) community.getAdmins().size())
+                .adminsCount(0L)
                 .tags(tags)
                 .build();
     }
@@ -47,8 +45,8 @@ public record CommunityResponse(
                 .membersCount((long) community.getMembers().size())
                 .groupsCount((long) community.getGroups().size())
                 .postCount((long) community.getPosts().size())
-                .adminsCount((long) community.getAdmins().size())
-                .tags(community.getTags().stream().map(Tag::getName).toList())
+                .adminsCount(0L)
+                .tags(community.getTags().stream().map(TagResponse::toResponse).toList())
                 .build();
     }
 }
