@@ -5,6 +5,6 @@ import java.util.List;
 public record CommunityRequest(
         String name,
         String description,
-        List<String> tags,
+        List<TagRequest> tags,
         String photoURL,
         String bannerURL) {}
