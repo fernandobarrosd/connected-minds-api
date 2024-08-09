@@ -12,6 +12,7 @@ public record PostResponse(
         String createdAt,
         String photoURL,
         Long likes,
+        UUID locationID,
         OwnerResponse owner) {
 
     public static PostResponse toResponse(Post post) {
@@ -21,6 +22,7 @@ public record PostResponse(
 
         return PostResponse.builder()
                 .id(post.getId())
+                .locationID(post.getLocationID())
                 .content(post.getContent())
                 .likes(post.getLikes())
                 .photoURL(post.getPhotoURL())
