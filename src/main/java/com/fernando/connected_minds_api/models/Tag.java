@@ -1,5 +1,7 @@
 package com.fernando.connected_minds_api.models;
 
+import java.util.UUID;
+
 import com.fernando.connected_minds_api.models.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +21,11 @@ public class Tag extends BaseEntity {
 
     public Tag(String name) {
         super(null);
+        this.name = name;
+    }
+
+    public Tag(UUID id, String name) {
+        super(id);
         this.name = name;
     }
 }
