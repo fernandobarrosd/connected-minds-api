@@ -5,6 +5,7 @@ import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
+import com.fernando.connected_minds_api.requests.params.PostLocationIDQueryParam;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
@@ -30,6 +31,11 @@ public class PostController {
         return ResponseEntity.created(null).body(postService.createPost(postRequest, user));
     }
 
+    @GetMapping
+    public ResponseEntity<List<PostResponse>> findAllPosts(@Valid PostLocationIDQueryParam queryParam) {
+        return ResponseEntity.ok(postService.findAllPosts(queryParam.locationID()));
+    }
+
     @GetMapping("/{postID}")
     public ResponseEntity<PostResponse> findPostByID(@PathVariable UUID postID) {
         return ResponseEntity.ok(postService.findPostByID(postID));
@@ -37,18 +43,19 @@ public class PostController {
 
     @PatchMapping("/{postID}")
     public ResponseEntity<PostResponse> updatePost(
+            @AuthenticationPrincipal User user,
             @PathVariable UUID postID,
             @RequestBody @Valid UpdatePostRequest postRequest) {
-        return ResponseEntity.ok(postService.updatePost(postID, postRequest));
+        return ResponseEntity.ok(postService.updatePost(postID, user.getId(), postRequest));
     }
 
     @DeleteMapping("/{postID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePost(@PathVariable UUID postID) {
-        postService.deletePost(postID);
+    public void deletePost(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID postID) {
+            postService.deletePost(postID, user.getId());
     }
-
-
 
     @PostMapping("/{postID}/comments")
     public ResponseEntity<CommentResponse> createComment(
