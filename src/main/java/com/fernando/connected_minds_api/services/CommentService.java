@@ -1,6 +1,7 @@
 package com.fernando.connected_minds_api.services;
 
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
+import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.models.Comment;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
@@ -28,9 +29,14 @@ public class CommentService {
         return CommentResponse.toResponse(comment);
     }
 
-    public void deleteComment(UUID commentID) {
+    public void deleteComment(UUID commentID, UUID userID) {
         Comment comment = commentRepository.findById(commentID)
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+        
+        if (comment.getOwner().getId() != userID) {
+            throw new UserIsNotOwnerOfResourceException("%s is not owner of comment#%s".
+                formatted(comment.getOwner().getUsername(), commentID.toString()));
+        }
         comment.setComment(null);
         commentRepository.delete(comment);
     }
@@ -55,9 +61,14 @@ public class CommentService {
         return CommentResponse.toResponse(commentOfComment);
     }
 
-    public CommentResponse updateComment(UUID commentID, UpdateCommentRequest commentRequest) {
+    public CommentResponse updateComment(UUID commentID, UpdateCommentRequest commentRequest, UUID ownerID) {
         Comment comment = commentRepository.findById(commentID)
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+        
+        if (comment.getOwner().getId() != ownerID) {
+            throw new UserIsNotOwnerOfResourceException("%s is not owner of comment#%s".
+                formatted(comment.getOwner().getUsername(), commentID.toString()));
+        }
 
         if (commentRequest.content() != null) {
             comment.setContent(commentRequest.content());
