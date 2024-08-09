@@ -8,4 +8,7 @@ public record PostRequest(
         @NotBlank(message = "content not should be empty")
         String content,
 
-        String photoURL) {}
+        String photoURL,
+        
+        @NotNull(message = "locationID field is required")
+        String locationID) {}
