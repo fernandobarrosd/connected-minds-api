@@ -50,12 +50,7 @@ public class User extends BaseEntity implements UserDetails {
     @Convert(converter = UserGenreConverter.class)
     private UserGenre genre;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_community",
-            joinColumns = @JoinColumn(name = "user_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "community_id", nullable = false)
-    )
+    @ManyToMany(mappedBy = "members")
     private List<Community> communities;
 
     @ManyToMany
