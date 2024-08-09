@@ -1,10 +1,14 @@
 package com.fernando.connected_minds_api.responses;
 
-import com.fernando.connected_minds_api.models.Tag;
+import java.util.UUID;
 
-public record TagResponse(String id, String name) {
+import com.fernando.connected_minds_api.models.Tag;
+import lombok.Builder;
+
+@Builder
+public record TagResponse(UUID id, String name) {
 
     public static TagResponse toResponse(Tag tag) {
-        return new TagResponse(tag.getId().toString(), tag.getName());
+        return new TagResponse(tag.getId(), tag.getName());
     }
 }
