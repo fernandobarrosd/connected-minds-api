@@ -1,10 +1,12 @@
 package com.fernando.connected_minds_api.services;
 
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
+import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.models.Comment;
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
+import com.fernando.connected_minds_api.repositories.CommunityRepository;
 import com.fernando.connected_minds_api.repositories.PostRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
@@ -26,16 +28,38 @@ import java.util.UUID;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final CommunityRepository communityRepository;
 
     public PostResponse createPost(PostRequest postRequest, User owner) {
+        UUID locationID = UUID.fromString(postRequest.locationID());
+
+        if (!communityRepository.existsById(locationID)) {
+            throw new EntityNotFoundException("Community or group is not exists");
+        }
         Post post = new Post(
                 postRequest.content(),
                 postRequest.photoURL(),
+                locationID,
                 owner
         );
         postRepository.save(post);
 
         return PostResponse.toResponse(post);
+    }
+
+    public List<PostResponse> findAllPosts(String locationID) {
+        UUID locationIdUUID = UUID.fromString(locationID);
+
+        if (!communityRepository.existsById(locationIdUUID)) {
+            throw new EntityNotFoundException("Community or group is not exists");
+        }
+
+        return postRepository.findAllByLocationID(locationIdUUID)
+            .stream()
+            .map(PostResponse::toResponse)
+            .toList();
+
+
     }
 
     public PostResponse findPostByID(UUID postID) {
@@ -58,16 +82,25 @@ public class PostService {
         return CommentResponse.toResponse(comment);
     }
 
-    public void deletePost(UUID postID) {
-        if (!postRepository.existsById(postID)) {
-            throw new EntityNotFoundException("Post is not exists");
+    public void deletePost(UUID postID, UUID userID) {
+        Post post = postRepository.findById(userID)
+            .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
+        
+        if (post.getOwner().getId() != userID) {
+            throw new UserIsNotOwnerOfResourceException("%s is not owner of post#%s".
+                formatted(post.getOwner().getUsername(), postID.toString()));
         }
         postRepository.deleteById(postID);
     }
 
-    public PostResponse updatePost(UUID postID, UpdatePostRequest postRequest) {
+    public PostResponse updatePost(UUID postID, UUID userID, UpdatePostRequest postRequest) {
         Post post = postRepository.findById(postID)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
+        
+        if (post.getOwner().getId() != userID) {
+            throw new UserIsNotOwnerOfResourceException("%s is not owner of post#%s".
+                    formatted(post.getOwner().getUsername(), postID.toString()));
+        }
 
         if (postRequest.content() != null) {
             post.setContent(postRequest.content());
