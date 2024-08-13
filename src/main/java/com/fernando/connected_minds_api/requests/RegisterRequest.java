@@ -6,33 +6,37 @@ import com.fernando.connected_minds_api.models.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public record RegisterRequest(
-        @NotNull(message = "username is required")
-        @NotEmpty(message = "username not should be empty")
+        @NotNull(message = "username field is required")
+        @NotEmpty(message = "username field not should be empty")
+        @Pattern(
+            regexp = "^[a-z][a-zA-Z0-9_]*",
+            message = "username field should be starts with lower case letter and can include this characters: [a-z], [A-Z], [0-9], _")
         String username,
 
-        @NotNull(message = "E-mail is required")
-        @Email(message = "E-mail is not valid")
+        @NotNull(message = "email field is required")
+        @Email(message = "E-mail field is not valid")
         String email,
 
-        @NotNull(message = "password is required")
-        @NotEmpty(message = "password not should be empty")
+        @NotNull(message = "password field is required")
+        @NotEmpty(message = "password field not should be empty")
         String password,
 
-        @NotNull(message = "photoURL is required")
+        @NotNull(message = "photoURL field is required")
         String photoURL,
 
-        @NotNull(message = "bannerURL is required")
+        @NotNull(message = "bannerURL field is required")
         String bannerURL,
 
-        @NotNull(message = "genre is required")
-        @EnumValidator(enumValues = {"MALE", "FEMALE"}, message = "User genre should be MALE or FEMALE")
+        @NotNull(message = "genre field is required")
+        @EnumValidator(enumValues = {"MALE", "FEMALE"}, message = "genre field should be MALE or FEMALE")
         String genre,
 
-        @NotNull(message = "birthDate is required")
-        @NotEmpty(message = "birthDate not should be empty")
+        @NotNull(message = "birthDate fied is required")
+        @NotEmpty(message = "birthDate field not should be empty")
         String birthDate) {
 
     public User toEntity() {
