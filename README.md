@@ -42,6 +42,11 @@
 - Entrar em uma comunidade
 - Sair de uma comunidade
 
+
+# Favoritos
+- Favoritar um post, comunidade ou grupo
+- Remover um post, comunidade ou grupo dos favoritos
+
 ### Buscar
 
 - Buscar um grupo ou comunidade pela TAG
