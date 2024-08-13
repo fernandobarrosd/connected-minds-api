@@ -27,7 +27,6 @@
 ### Grupos
 
 - Criar um grupo em uma comunidade
-- Deletar um grupo
 - Editar um grupo
 - Convidar membros pra um grupo
 - Entrar em um grupo
