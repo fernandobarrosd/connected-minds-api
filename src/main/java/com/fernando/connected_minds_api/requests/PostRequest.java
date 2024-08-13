@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PostRequest(
-        @NotNull(message = "content is required")
-        @NotBlank(message = "content not should be empty")
+        @NotNull(message = "content field is required")
+        @NotBlank(message = "content field not should be empty")
         String content,
 
         String photoURL,
