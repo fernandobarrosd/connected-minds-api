@@ -43,7 +43,7 @@
 - Sair de uma comunidade
 
 
-# Favoritos
+## Favoritos
 - Favoritar um post, comunidade ou grupo
 - Remover um post, comunidade ou grupo dos favoritos
 
