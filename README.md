@@ -27,7 +27,6 @@
 ### Grupos
 
 - Criar um grupo em uma comunidade
-- Deletar um grupo
 - Editar um grupo
 - Convidar membros pra um grupo
 - Entrar em um grupo
@@ -41,6 +40,10 @@
 - Convidar membros pra comunidade
 - Entrar em uma comunidade
 - Sair de uma comunidade
+
+### Favoritos
+- Favoritar um post, comunidade ou grupo
+- Remover um post, comunidade ou grupo dos favoritos
 
 ### Buscar
 
