@@ -33,4 +33,9 @@ public class UserService {
                 .map(CommunityResponse::toResponse)
                 .toList();
     }
+
+    public User findUserById(UUID userID) {
+        return userRepository.findById(userID)
+        .orElseThrow(() -> new EntityNotFoundException("User is not exists"));
+    }
 }
