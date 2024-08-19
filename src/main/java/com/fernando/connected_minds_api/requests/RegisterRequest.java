@@ -25,7 +25,6 @@ public record RegisterRequest(
         @NotEmpty(message = "password field not should be empty")
         String password,
 
-        @NotNull(message = "photoURL field is required")
         String photoURL,
 
         @NotNull(message = "bannerURL field is required")
