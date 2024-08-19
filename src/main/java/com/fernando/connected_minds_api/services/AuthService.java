@@ -1,8 +1,10 @@
 package com.fernando.connected_minds_api.services;
 
+import com.fernando.connected_minds_api.enums.UserGenre;
 import com.fernando.connected_minds_api.exceptions.EntityAlreadyExistsException;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
+import com.fernando.connected_minds_api.models.Avatar;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.UserRepository;
 import com.fernando.connected_minds_api.requests.LoginRequest;
@@ -27,6 +29,7 @@ public class AuthService implements UserDetailsService {
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final AvatarsService avatarsService;
     private final ApplicationContext applicationContext;
 
     @Override
@@ -80,6 +83,19 @@ public class AuthService implements UserDetailsService {
         User user = request.toEntity();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+
+        if (request.photoURL() == null || request.photoURL().isBlank()) {
+            Avatar avatar;
+
+            if (user.getGenre() == UserGenre.MALE) {
+                avatar = avatarsService.getRandomMaleAvatar();
+            }
+            else {
+                avatar = avatarsService.getRandomFemaleAvatar();
+            }
+
+            user.setPhotoURL(avatar.getUrl());
+        }
 
         try {
             userRepository.save(user);
