@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fernando.connected_minds_api.enums.InviteType;
 
 @Entity
 @Table(name = "invite_table")
@@ -15,9 +16,11 @@ import lombok.Setter;
 @Setter
 public class Invite extends BaseEntity {
     private UUID fromID;
+    private InviteType type;
 
-    public Invite(UUID fromID) {
+    public Invite(UUID fromID, InviteType type) {
         super(null);
         this.fromID = fromID;
+        this.type = type;
     }
 }
