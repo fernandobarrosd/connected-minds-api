@@ -27,7 +27,6 @@ public class CommunityService {
    private final CommunityRepository communityRepository;
    private final GroupRepository groupRepository;
    private final TagService tagService;
-   private final UserService userService;
 
    @Transactional
    public CommunityResponse createCommunity(CommunityRequest communityRequest, User owner) {
@@ -93,14 +92,17 @@ public class CommunityService {
 
    }
 
-   public void addMemberOnCommunity(UUID communityID, UUID memberID) {
-        User newMember = userService.findUserById(memberID);
+   public void addMemberOnCommunity(UUID communityID, User member) {
         Community community = communityRepository.findById(communityID)
                 .orElseThrow(() -> new EntityNotFoundException("Community is not exists"));
 
-        community.getMembers().add(newMember);
+        community.getMembers().add(member);
 
         communityRepository.save(community);
    }
+
+   public boolean communityIsExists(UUID communityID) {
+        return communityRepository.existsById(communityID);
+    }
 
 }
