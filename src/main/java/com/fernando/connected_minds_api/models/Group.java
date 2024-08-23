@@ -34,6 +34,11 @@ public class Group extends BaseEntity {
     private Community community;
 
     @ManyToMany
+    @JoinTable(
+            name = "group_user",
+            joinColumns = @JoinColumn(name = "group_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false)
+    )
     private List<User> members;
 
     @OneToMany
