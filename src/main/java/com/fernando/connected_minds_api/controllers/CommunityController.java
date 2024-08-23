@@ -49,12 +49,4 @@ public class CommunityController {
         @Valid PaginationQueryParams pagination) {
         return ResponseEntity.ok(communityService.findAllGroups(UUID.fromString(communityID), pagination));
     }
-
-    @PostMapping("/{communityID}/members/{memberID}")
-    public ResponseEntity<?> addMemberOnCommunity(
-        @PathVariable UUID communityID,
-        @PathVariable UUID memberID) {
-            communityService.addMemberOnCommunity(communityID, memberID);
-            return ResponseEntity.noContent().build();
-        }
 }
