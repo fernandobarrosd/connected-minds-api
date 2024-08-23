@@ -53,15 +53,8 @@ public class User extends BaseEntity implements UserDetails {
     @ManyToMany(mappedBy = "members")
     private List<Community> communities;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_group",
-            joinColumns = @JoinColumn(name = "user_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "group_id", nullable = false)
-    )
+    @ManyToMany(mappedBy = "members")
     private List<Group> groups;
-
-
 
     public User(String username, String email, String password, LocalDate birthDate,
                 String bannerURL, String photoURL, UserGenre genre) {
