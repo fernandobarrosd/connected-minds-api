@@ -24,7 +24,7 @@ public record PostResponse(
                 .id(post.getId())
                 .locationID(post.getLocationID())
                 .content(post.getContent())
-                .likes(post.getLikes())
+                .likes((long) post.getLikes().size())
                 .photoURL(post.getPhotoURL())
                 .owner(ownerResponse)
                 .createdAt(post.getCreatedAt().toString())
