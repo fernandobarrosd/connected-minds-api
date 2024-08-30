@@ -12,8 +12,8 @@
 - [X] Criar um post em uma comunidade ou grupo
 - [X] Deletar um post
 - [X] Editar um post
-- [ ] Curtir um post
-- [ ] Tirar a curtida do post
+- [X] Curtir um post
+- [X] Tirar a curtida do post
 
 ### Comentários
 
