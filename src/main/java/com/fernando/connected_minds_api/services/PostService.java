@@ -1,8 +1,10 @@
 package com.fernando.connected_minds_api.services;
 
+import com.fernando.connected_minds_api.exceptions.CannotLikeTheOwnPostException;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.models.Comment;
+import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
@@ -29,6 +31,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommunityRepository communityRepository;
+    private final LikePostService likePostService;
 
     public PostResponse createPost(PostRequest postRequest, User owner) {
         UUID locationID = UUID.fromString(postRequest.locationID());
@@ -108,9 +111,6 @@ public class PostService {
         if (postRequest.photoURL() != null) {
             post.setPhotoURL(postRequest.photoURL());
         }
-        if (postRequest.likes() != null) {
-            post.setLikes(postRequest.likes());
-        }
         postRepository.save(post);
         return PostResponse.toResponse(post);
     }
@@ -125,5 +125,20 @@ public class PostService {
                 .stream()
                 .map(CommentResponse::toResponse)
                 .toList();
+    }
+
+    public LikePost createLike(User user, UUID postID) {
+        Post post = postRepository.findById(postID)
+                .orElseThrow(() -> new EntityNotFoundException("Post is not exists"));
+
+        LikePost like = new LikePost(user, post);
+
+        if (post.getOwner().getId() == user.getId()) {
+            throw new CannotLikeTheOwnPostException("Actually auth user dont like the own post");
+        }
+
+        likePostService.saveLike(like);
+
+        return like;
     }
 }
