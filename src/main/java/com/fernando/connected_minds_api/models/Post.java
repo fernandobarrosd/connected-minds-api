@@ -28,8 +28,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @Column(nullable = false)
-    private Long likes;
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<LikePost> likes;
 
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments;
@@ -44,7 +44,7 @@ public class Post extends BaseEntity {
         this.owner = owner;
         this.locationID = locationID;
         this.createdAt = LocalDateTime.now();
-        this.likes = 0L;
+        this.likes = List.of();
         this.comments = List.of();
     }
 }
