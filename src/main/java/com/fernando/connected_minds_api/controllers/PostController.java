@@ -73,4 +73,13 @@ public class PostController {
 
         return ResponseEntity.ok(postService.findAllComments(postID, pagination));
     }
+
+
+    @PostMapping("/{postID}/likes")
+    public ResponseEntity<?> createLike(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID postID) {
+
+            return ResponseEntity.created(null).body(postService.createLike(user, postID));
+        }
 }
