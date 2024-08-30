@@ -1,6 +1,7 @@
 package com.fernando.connected_minds_api.services;
 
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
+import com.fernando.connected_minds_api.exceptions.UserIsAlreadyExiststInCommunityOrGroupException;
 import com.fernando.connected_minds_api.models.Community;
 import com.fernando.connected_minds_api.models.Group;
 import com.fernando.connected_minds_api.models.Tag;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import org.springframework.data.domain.Pageable;
@@ -95,6 +97,17 @@ public class CommunityService {
    public void addMemberOnCommunity(UUID communityID, User member) {
         Community community = communityRepository.findById(communityID)
                 .orElseThrow(() -> new EntityNotFoundException("Community is not exists"));
+
+        
+        Optional<User> user = community
+                .getMembers()
+                .stream().
+                filter(userMember -> userMember.getId() == member.getId())
+                .findFirst();
+
+        if (user.isPresent()) {
+                throw new UserIsAlreadyExiststInCommunityOrGroupException("User is already exists in community#%d".formatted(communityID));               
+        }
 
         community.getMembers().add(member);
 
