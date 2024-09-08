@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
+
 import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
 
 @Service
@@ -27,11 +29,11 @@ public class JWTService {
                 .sign(HMAC256(jwtSecretKey));
     }
 
-    public String generateRefreshToken(String userID) {
+    public String generateRefreshToken(UUID userID) {
         return JWT
                 .create()
                 .withIssuer(ISSUER)
-                .withSubject(userID)
+                .withSubject(userID.toString())
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(generateRefreshTokenExpirationDate())
                 .sign(HMAC256(jwtSecretKey));
