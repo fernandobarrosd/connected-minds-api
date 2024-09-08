@@ -55,7 +55,7 @@ public class AuthService implements UserDetailsService {
         }
         User user = (User) auth.getPrincipal();
         String token = jwtService.generateJWT(loginRequest.email());
-        String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
+        String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
         return new AuthResponse(token, refreshToken, expiresAt);
@@ -100,11 +100,11 @@ public class AuthService implements UserDetailsService {
         try {
             userRepository.save(user);
         }
-        catch (Exception exception) {
+        catch (IllegalArgumentException exception) {
             throw new EntityAlreadyExistsException("User is already exists");
         }
         String token = jwtService.generateJWT(user.getEmail());
-        String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
+        String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
         return new AuthResponse(token, refreshToken, expiresAt);
