@@ -1,5 +1,6 @@
 package com.fernando.connected_minds_api.controllers;
 
+import com.fernando.connected_minds_api.documentation.AuthControllerDocumentation;
 import com.fernando.connected_minds_api.requests.LoginRequest;
 import com.fernando.connected_minds_api.requests.RefreshTokenRequest;
 import com.fernando.connected_minds_api.requests.RegisterRequest;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthControllerDocumentation {
     private final AuthService authService;
 
     @PostMapping("/login")
