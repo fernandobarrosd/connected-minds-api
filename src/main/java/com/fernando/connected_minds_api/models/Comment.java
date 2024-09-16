@@ -35,8 +35,8 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", orphanRemoval = true)
     private List<Comment> comments;
 
-    @Column(nullable = false)
-    private Long likes;
+    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+    private List<LikeComment> likes;
 
     public Comment(String content, Comment comment, User owner, Post post) {
         super(null);
@@ -45,7 +45,7 @@ public class Comment extends BaseEntity {
         this.post = post;
         this.comment = comment;
         this.createdAt = LocalDateTime.now();
-        this.likes = 0L;
+        this.likes = List.of();
         this.comments = List.of();
     }
 
@@ -55,7 +55,7 @@ public class Comment extends BaseEntity {
         this.owner = owner;
         this.post = post;
         this.createdAt = LocalDateTime.now();
-        this.likes = 0L;
+        this.likes = List.of();
         this.comments = List.of();
     }
 }
