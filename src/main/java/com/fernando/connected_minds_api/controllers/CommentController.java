@@ -1,5 +1,6 @@
 package com.fernando.connected_minds_api.controllers;
 
+import com.fernando.connected_minds_api.models.LikeComment;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
@@ -60,4 +61,11 @@ public class CommentController {
             @Valid PaginationQueryParams pagination) {
         return ResponseEntity.ok(commentService.findAllCommentsOfComment(commentID, pagination));
     }
+
+    @PostMapping("/{commentID}/likes")
+    public ResponseEntity<LikeComment> createLike(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID commentID) {
+            return ResponseEntity.created(null).body(commentService.createLike(user, commentID));
+        }
 }
