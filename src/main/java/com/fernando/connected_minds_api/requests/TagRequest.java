@@ -1,11 +1,12 @@
 package com.fernando.connected_minds_api.requests;
 
+import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record TagRequest(
-    String id,
+    UUID id,
 
     @NotNull(message = "name field is required")
     @NotBlank(message = "name field not should be empty")
