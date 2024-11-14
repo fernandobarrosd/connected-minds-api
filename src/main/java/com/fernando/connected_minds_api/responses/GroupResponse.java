@@ -14,11 +14,10 @@ public record GroupResponse(
     String createdAt,
     Long membersCount,
     Long postsCount,
-    Long adminsCount,
     List<TagResponse> tags,
     String communityName) {
 
-    public static GroupResponse toResponse(Group group, List<TagResponse> tags, Long adminsCount) {
+    public static GroupResponse toResponse(Group group, List<TagResponse> tags) {
         return GroupResponse.builder()
             .id(group.getId())
             .name(group.getName())
@@ -27,9 +26,8 @@ public record GroupResponse(
             .bannerURL(group.getBannerURL())
             .createdAt(group.getCreatedAt().toString())
             .tags(tags)
-            .membersCount((long) group.getMembers().size())
-            .postsCount((long) group.getPosts().size())
-            .adminsCount(adminsCount)
+            .membersCount(group.getMembers().stream().count())
+            .postsCount(group.getPosts().stream().count())
             .communityName(group.getCommunity().getName())
             .build();
     }
