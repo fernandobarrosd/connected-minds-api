@@ -24,10 +24,10 @@ public record PostResponse(
                 .id(post.getId())
                 .locationID(post.getLocationID())
                 .content(post.getContent())
-                .likes((long) post.getLikes().size())
+                .likes(post.getLikes().stream().count())
                 .photoURL(post.getPhotoURL())
-                .owner(ownerResponse)
                 .createdAt(post.getCreatedAt().toString())
+                .owner(ownerResponse)
                 .build();
     }
 }
