@@ -6,8 +6,9 @@ import com.fernando.connected_minds_api.requests.TagRequest;
 import com.fernando.connected_minds_api.responses.TagResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,19 +22,23 @@ public class TagService {
                 .toList();
     }
 
-    public List<Tag> saveAllTags(List<TagRequest> tagsRequest) {
-        List<Tag> tags = tagsRequest
-                .stream()
-                .map(tag -> {
-                        if (tag.id() == null) {
-                                System.out.println(tag.id());
-                                return new Tag(tag.name());
-                        }
-                        return new Tag(UUID.fromString(tag.id()), tag.name());
-                })
-                .toList();
-        
-        tagRepository.saveAll(tags);
+    public List<Tag> saveOrFindAndReturnAllTags(List<TagRequest> tagsRequest) {
+        List<Tag> tags = new ArrayList<>();
+
+        for (TagRequest tagRequest : tagsRequest) {
+            Optional<Tag> tagOptional = tagRepository.findByName(tagRequest.name());
+
+            if (tagOptional.isPresent()) {
+                tags.add(tagOptional.get());
+            }
+            else {
+                Tag tag = new Tag(tagRequest.name());
+                tagRepository.save(tag);
+
+                tags.add(tag);
+            }
+            
+        }
         return tags;
     }
 }
