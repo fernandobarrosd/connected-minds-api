@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_table")
@@ -34,7 +35,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "banner_url")
     private String bannerURL;
 
-    @Column(nullable = false, name = "photo_url")
+    @Column(name = "photo_url")
     private String photoURL;
 
     private String bio;
@@ -59,6 +60,21 @@ public class User extends BaseEntity implements UserDetails {
     public User(String username, String email, String password, LocalDate birthDate,
                 String bannerURL, String photoURL, UserGenre genre) {
         super(null);
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.birthDate = birthDate;
+        this.bannerURL = bannerURL;
+        this.photoURL = photoURL;
+        this.genre = genre;
+        this.status = UserStatus.OFFLINE;
+        this.communities = List.of();
+        this.groups = List.of();
+    }
+
+    public User(UUID id, String username, String email, String password, LocalDate birthDate,
+                String bannerURL, String photoURL, UserGenre genre) {
+        super(id);
         this.username = username;
         this.email = email;
         this.password = password;
