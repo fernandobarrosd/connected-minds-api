@@ -15,25 +15,8 @@ public record CommunityResponse(
         String createdAt,
         Long membersCount,
         Long groupsCount,
-        Long postCount,
-        Long adminsCount,
+        Long postsCount,
         List<TagResponse> tags) {
-    public static CommunityResponse toResponse(Community community, List<TagResponse> tags) {
-        return CommunityResponse.builder()
-                .id(community.getId())
-                .name(community.getName())
-                .description(community.getDescription())
-                .photoURL(community.getPhotoURL())
-                .bannerURL(community.getBannerURL())
-                .createdAt(community.getCreatedAt().toString())
-                .membersCount((long) community.getMembers().size())
-                .groupsCount((long) community.getGroups().size())
-                .postCount((long) community.getPosts().size())
-                .adminsCount(0L)
-                .tags(tags)
-                .build();
-    }
-
     public static CommunityResponse toResponse(Community community) {
         return CommunityResponse.builder()
                 .id(community.getId())
@@ -42,10 +25,9 @@ public record CommunityResponse(
                 .photoURL(community.getPhotoURL())
                 .bannerURL(community.getBannerURL())
                 .createdAt(community.getCreatedAt().toString())
-                .membersCount((long) community.getMembers().size())
-                .groupsCount((long) community.getGroups().size())
-                .postCount((long) community.getPosts().size())
-                .adminsCount(0L)
+                .membersCount(community.getMembers().stream().count())
+                .groupsCount(community.getGroups().stream().count())
+                .postsCount(community.getPosts().stream().count())
                 .tags(community.getTags().stream().map(TagResponse::toResponse).toList())
                 .build();
     }
