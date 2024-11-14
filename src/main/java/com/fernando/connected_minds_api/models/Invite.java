@@ -2,7 +2,6 @@ package com.fernando.connected_minds_api.models;
 
 import java.util.UUID;
 import com.fernando.connected_minds_api.models.base.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
