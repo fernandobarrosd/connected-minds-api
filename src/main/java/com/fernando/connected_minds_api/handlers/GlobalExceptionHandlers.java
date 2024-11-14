@@ -4,6 +4,7 @@ import com.fernando.connected_minds_api.exceptions.CannotLikeTheOwnPostException
 import com.fernando.connected_minds_api.exceptions.EntityAlreadyExistsException;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
+import com.fernando.connected_minds_api.exceptions.UnderAgeException;
 import com.fernando.connected_minds_api.exceptions.UserIsAlreadyExiststInCommunityOrGroupException;
 import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.responses.error.ErrorResponse;
@@ -112,6 +113,21 @@ public class GlobalExceptionHandlers {
                 .date(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(statusCode).body(errorResponse);
+    }
+
+    @ExceptionHandler(UnderAgeException.class)
+    public ResponseEntity<ErrorResponse> handleUnderAge(
+            UnderAgeException exception,
+            HttpServletRequest request) {
+
+        int statusCode = HttpStatus.BAD_REQUEST.value();
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(exception.getMessage())
+                .statusCode(statusCode)
+                .path(request.getRequestURI())
+                .date(LocalDateTime.now())
+                .build();
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
