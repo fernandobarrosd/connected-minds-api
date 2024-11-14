@@ -3,6 +3,8 @@ package com.fernando.connected_minds_api.services;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.models.Comment;
+import com.fernando.connected_minds_api.models.LikeComment;
+import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
@@ -21,6 +23,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final LikeCommentService likeCommentService;
+
+    public CommentResponse saveComment(String content, User user, Post post) {
+        Comment comment = new Comment(content, user, post);
+
+        commentRepository.save(comment);
+
+        return CommentResponse.toResponse(comment);
+    }
+
+    public List<CommentResponse> findAllComments(PaginationQueryParams pagination, UUID postID) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage(), Sort.by("likes").descending());
+
+        return commentRepository.findAllByPostId(postID, pageable)
+                .stream()
+                .map(CommentResponse::toResponse)
+                .toList();
+    }
 
     public CommentResponse findCommentById(UUID commentID) {
         Comment comment = commentRepository.findById(commentID)
@@ -73,12 +93,20 @@ public class CommentService {
         if (commentRequest.content() != null) {
             comment.setContent(commentRequest.content());
         }
-        if (commentRequest.likes() != null) {
-            comment.setLikes(commentRequest.likes());
-        }
 
         commentRepository.save(comment);
 
         return CommentResponse.toResponse(comment);
+    }
+
+
+    public LikeComment saveLikeComment(User user, UUID commentID) {
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
+
+        LikeComment like = likeCommentService.saveLikeComment(user, comment);
+
+        return like;
+        
     }
 }
