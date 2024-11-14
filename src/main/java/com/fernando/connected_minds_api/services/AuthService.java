@@ -1,10 +1,9 @@
 package com.fernando.connected_minds_api.services;
 
-import com.fernando.connected_minds_api.enums.UserGenre;
 import com.fernando.connected_minds_api.exceptions.EntityAlreadyExistsException;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
-import com.fernando.connected_minds_api.models.Avatar;
+import com.fernando.connected_minds_api.exceptions.UnderAgeException;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.UserRepository;
 import com.fernando.connected_minds_api.requests.LoginRequest;
@@ -21,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -29,7 +29,6 @@ public class AuthService implements UserDetailsService {
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final AvatarsService avatarsService;
     private final ApplicationContext applicationContext;
 
     @Override
@@ -54,7 +53,7 @@ public class AuthService implements UserDetailsService {
             throw new EntityNotFoundException("User is not exists");
         }
         User user = (User) auth.getPrincipal();
-        String token = jwtService.generateJWT(loginRequest.email());
+        String token = jwtService.generateJWT(user);
         String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
@@ -72,7 +71,7 @@ public class AuthService implements UserDetailsService {
         User user = userRepository.findById(UUID.fromString(userID))
                 .orElseThrow(() -> new EntityNotFoundException("User is not exists"));
 
-        String newToken = jwtService.generateJWT(user.getEmail());
+        String newToken = jwtService.generateJWT(user);
         String expiresAt = jwtService.getExpiresAt(newToken).get();
 
         return new AuthResponse(newToken, refreshToken, expiresAt);
@@ -81,29 +80,26 @@ public class AuthService implements UserDetailsService {
 
     public AuthResponse registerUser(RegisterRequest request) {
         User user = request.toEntity();
+
+        Integer currentYear = LocalDate.now().getYear();
+        Integer birthYear = user.getBirthDate().getYear();
+        Integer age = currentYear - birthYear;
+
+        if (age < 13) {
+            throw new UnderAgeException("User age must be greather than or equal to 13 years old");
+        }
+
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        if (request.photoURL() == null || request.photoURL().isBlank()) {
-            Avatar avatar;
-
-            if (user.getGenre() == UserGenre.MALE) {
-                avatar = avatarsService.getRandomMaleAvatar();
-            }
-            else {
-                avatar = avatarsService.getRandomFemaleAvatar();
-            }
-
-            user.setPhotoURL(avatar.getUrl());
-        }
-
+        
         try {
             userRepository.save(user);
         }
         catch (IllegalArgumentException exception) {
             throw new EntityAlreadyExistsException("User is already exists");
         }
-        String token = jwtService.generateJWT(user.getEmail());
+        String token = jwtService.generateJWT(user);
         String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
