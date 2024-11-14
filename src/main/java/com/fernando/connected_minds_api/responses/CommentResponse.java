@@ -20,10 +20,10 @@ public record CommentResponse(
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .likes(comment.getLikes())
+                .likes(comment.getLikes().stream().count())
                 .createdAt(comment.getCreatedAt().toString())
-                .owner(ownerResponse)
                 .postID(comment.getPost().getId())
+                .owner(ownerResponse)
                 .build();
     }
 }
