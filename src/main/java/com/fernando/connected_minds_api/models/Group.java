@@ -20,10 +20,10 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false, name = "photo_url")
+    @Column(name = "photo_url")
     private String photoURL;
 
-    @Column(nullable = false, name = "banner_url")
+    @Column(name = "banner_url")
     private String bannerURL;
 
     @OneToMany
