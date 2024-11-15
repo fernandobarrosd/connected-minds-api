@@ -2,10 +2,10 @@ package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
+import com.fernando.connected_minds_api.requests.FindAllPostsRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
-import com.fernando.connected_minds_api.requests.params.PostLocationIDQueryParam;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import com.fernando.connected_minds_api.services.PostService;
@@ -32,8 +32,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> findAllPosts(@Valid PostLocationIDQueryParam queryParam) {
-        return ResponseEntity.ok(postService.findAllPosts(queryParam.locationID()));
+    public ResponseEntity<List<PostResponse>> findAllPosts(@Valid @RequestBody FindAllPostsRequest request) {
+        return ResponseEntity.ok(postService.findAllPosts(request));
     }
 
     @GetMapping("/{postID}")
