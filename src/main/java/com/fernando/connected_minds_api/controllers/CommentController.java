@@ -66,6 +66,6 @@ public class CommentController {
     public ResponseEntity<LikeComment> createLike(
         @AuthenticationPrincipal User user,
         @PathVariable UUID commentID) {
-            return ResponseEntity.created(null).body(commentService.createLike(user, commentID));
+            return ResponseEntity.created(null).body(commentService.saveLikeComment(user, commentID));
         }
 }
