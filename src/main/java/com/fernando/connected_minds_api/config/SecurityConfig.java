@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/h2-console", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/h2-console", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
