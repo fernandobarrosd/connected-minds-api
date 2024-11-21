@@ -16,12 +16,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fernando.connected_minds_api.enums.UserGenre;
+import com.fernando.connected_minds_api.models.User;
+import java.time.LocalDate;
 
 
 @ExtendWith(MockitoExtension.class)
 public class JWTServiceTest {
     @Mock
     private JWTService jwtService;
+
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
@@ -38,30 +44,46 @@ public class JWTServiceTest {
 
     @Test
     public void shouldGenerateJWTTokenAndReturnToken() throws Exception {
-        String email = "fernandotest@test.com";
+        String email = "test@test.com";
+        String username = "username";
+
         String instant = generateInstant(2024, 9, 5, 19, 0);
+
         String jwtJson = """
             {
                \"sub\": \"%s\",
                \"iss\": \"%s\",
                \"iat\": \"%s\",
-               \"exp\": \"%s\"
+               \"exp\": \"%s\",
+               \"username\": \"%s\",
+               \"photo_url\": %s,
+               \"banner_url\": %s,
+               \"bio\": %s
+               
             }
-        """.formatted(email, "Unit test", instant, instant);
+        """.formatted(email, "Unit test", instant, instant, username, null, null, null);
+
+        var user = new User(username, email, "password", 
+        LocalDate.now(), null, null, UserGenre.MALE);
+        user.setBio(null);
         
 
-        when(jwtService.generateJWT(stringArgumentCaptor.capture())).thenReturn(jwtJson);
+        when(jwtService.generateJWT(userArgumentCaptor.capture())).thenReturn(jwtJson);
 
-        String jwtJSON = jwtService.generateJWT(email);
+        String jwtJSON = jwtService.generateJWT(user);
 
         Map<String, String> jwtMap = convertJSONToMap(jwtJSON);
         
         assertNotNull(jwtMap);
-        assertNotNull(stringArgumentCaptor.getValue());
+        assertNotNull(userArgumentCaptor.getValue());
         assertEquals(email, jwtMap.get("sub"));
         assertEquals("Unit test", jwtMap.get("iss"));
         assertEquals(instant, jwtMap.get("iat"));
         assertEquals(instant, jwtMap.get("exp"));
+        assertEquals(username, jwtMap.get("username"));
+        assertNull(jwtMap.get("photo_url"));
+        assertNull(jwtMap.get("banner_url"));
+        assertNull(jwtMap.get("bio"));
     }
 
     @Test
@@ -75,7 +97,7 @@ public class JWTServiceTest {
                \"iat\": \"%s\",
                \"exp\": \"%s\"
             }
-        """.formatted(userID.toString(), "Unit test", instant, instant);
+        """.formatted(userID, "Unit test", instant, instant);
         
 
         when(jwtService.generateRefreshToken(userIDArgumentCaptor.capture())).thenReturn(jwtJson);
