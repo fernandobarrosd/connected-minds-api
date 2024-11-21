@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -19,8 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
+import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
 import com.fernando.connected_minds_api.repositories.UserRepository;
 import com.fernando.connected_minds_api.requests.LoginRequest;
+import com.fernando.connected_minds_api.requests.RefreshTokenRequest;
 import com.fernando.connected_minds_api.responses.AuthResponse;
 import com.fernando.connected_minds_api.responses.error.ErrorResponse;
 import com.fernando.connected_minds_api.services.AuthService;
@@ -78,14 +78,8 @@ public class AuthControllerTest {
     @WithMockUser(username = "user", roles = "USER")
     public void shouldAuthenticateUserWithError() throws Exception {
         LoginRequest loginRequest = new LoginRequest("fernandotest@test.com", "ftest");
+
         EntityNotFoundException exception = new EntityNotFoundException("User is not exists");
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(exception.getMessage())
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .path("/auth/login")
-                .date(LocalDateTime.of(2024, 9, 8, 16, 40))
-                .build();
-        
 
         when(authService.authenticate(loginRequest)).thenThrow(exception);
 
@@ -110,6 +104,42 @@ public class AuthControllerTest {
             assertEquals("/auth/login", mvcResult.getRequest().getRequestURI());
             assertEquals("application/json;charset=UTF-8", mvcResult.getRequest().getContentType());
             assertEquals(HttpStatus.NOT_FOUND.value(), mvcResult.getResponse().getStatus());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void shouldGenerateNewTokenWithSuccess() throws Exception {
+        var refreshTokenRequest = new RefreshTokenRequest("refresh-token");
+        var exception = new JWTTokenInvalidException("Refresh token is not valid");
+
+        when(authService.generateNewToken(refreshTokenRequest)).thenThrow(exception);
+
+        MvcResult mvcResult = mockMvc.perform(post("/auth/token")
+            .contentType("application/json;charset=UTF-8")
+            .accept("application/json;charset=UTF-8")
+            .with(csrf())
+            .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        var responseError = objectMapper.readValue(response, ErrorResponse.class);
+
+        assertNotNull(responseError);
+        assertNotNull(responseError.getMessage());
+        assertNotNull(responseError.getStatusCode());
+        assertNotNull(responseError.getPath());
+        
+
+
+        assertEquals("Refresh token is not valid", responseError.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), responseError.getStatusCode());
+        assertEquals("/auth/token", responseError.getPath());
+        assertEquals("POST", mvcResult.getRequest().getMethod());
+        assertEquals("application/json;charset=UTF-8", mvcResult.getRequest().getContentType());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
 
     }
 
