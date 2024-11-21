@@ -3,16 +3,13 @@ package com.fernando.connected_minds_api.services;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.UserIsAlreadyExiststInCommunityOrGroupException;
 import com.fernando.connected_minds_api.models.Community;
-import com.fernando.connected_minds_api.models.Group;
 import com.fernando.connected_minds_api.models.Tag;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommunityRepository;
-import com.fernando.connected_minds_api.repositories.GroupRepository;
 import com.fernando.connected_minds_api.requests.CommunityRequest;
 import com.fernando.connected_minds_api.requests.GroupRequest;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.GroupResponse;
-import com.fernando.connected_minds_api.responses.TagResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +24,12 @@ import org.springframework.data.domain.PageRequest;
 @RequiredArgsConstructor
 public class CommunityService {
    private final CommunityRepository communityRepository;
-   private final GroupRepository groupRepository;
+   private final GroupService groupService;
    private final TagService tagService;
 
    @Transactional
    public CommunityResponse createCommunity(CommunityRequest communityRequest, User owner) {
-        List<Tag> tags = tagService.saveAllTags(communityRequest.tags());
+        List<Tag> tags = tagService.saveOrFindAndReturnAllTags(communityRequest.tags());
 
         Community community = new Community(
                 communityRequest.name(),
@@ -44,38 +41,30 @@ public class CommunityService {
 
         communityRepository.save(community);
 
-        Community communitySaved = communityRepository.findById(community.getId()).get();
+        return CommunityResponse.toResponse(community);
+   }
 
-        List<TagResponse> tagsResponse = communitySaved.getTags().stream()
-                .map(TagResponse::toResponse)
-                .toList();
+   public void existsCommunityById(UUID communityID) {
+        if (!communityRepository.existsById(communityID)) {
+                throw new EntityNotFoundException("Community or group is not exists");
+        }
+   }
 
-        return CommunityResponse.toResponse(communitySaved, tagsResponse);
+   
+   public Community findCommunityByID(UUID communityID) {
+        return communityRepository.findById(communityID)
+                .orElseThrow(() -> new EntityNotFoundException("Community or group is not exists"));
    }
    
    public GroupResponse createGroup(User user, GroupRequest groupRequest, UUID communityID) {
-        List<Tag> tags = tagService.saveAllTags(groupRequest.tags());
+        List<Tag> tags = tagService.saveOrFindAndReturnAllTags(groupRequest.tags());
 
         Community community = communityRepository.findById(communityID)
                 .orElseThrow(() -> new EntityNotFoundException("Community is not exists"));
         
-        Group group = new Group(
-                groupRequest.name(),
-                groupRequest.description(),
-                groupRequest.photoURL(),
-                groupRequest.bannerURL(),
-                user,
-                community,
-                tags
-        );
-
-        groupRepository.save(group);
-
-        List<TagResponse> tagsResponse = !tags.isEmpty() ? tags.stream()
-                .map(TagResponse::toResponse)
-                .toList()
-        : List.of();
-        return GroupResponse.toResponse(group, tagsResponse, 0L);
+        
+        GroupResponse groupResponse = groupService.saveGroup(groupRequest, user, community, tags);
+        return groupResponse;
    }
 
    public List<GroupResponse> findAllGroups(UUID communityID, PaginationQueryParams pagination) {
@@ -83,14 +72,8 @@ public class CommunityService {
                 throw new EntityNotFoundException("Community is not exists"); 
         }
 
-
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage());
-        List<Group> groups = groupRepository.findAllByCommunityId(communityID, pageable);
-        
-
-        return groups.stream()
-                .map(group -> GroupResponse.toResponse(group, group.getTags().stream().map(TagResponse::toResponse).toList(), 0L))
-                .toList();
+        return groupService.findAllGroups(communityID, pageable);
 
    }
 
