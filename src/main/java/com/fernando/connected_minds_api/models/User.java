@@ -57,6 +57,9 @@ public class User extends BaseEntity implements UserDetails {
     @ManyToMany(mappedBy = "members")
     private List<Group> groups;
 
+    @OneToMany(mappedBy = "owner")
+    private List<Notification> notifications;
+
     public User(String username, String email, String password, LocalDate birthDate,
                 String bannerURL, String photoURL, UserGenre genre) {
         super(null);
@@ -70,6 +73,7 @@ public class User extends BaseEntity implements UserDetails {
         this.status = UserStatus.OFFLINE;
         this.communities = List.of();
         this.groups = List.of();
+        this.notifications = List.of();
     }
 
     public User(UUID id, String username, String email, String password, LocalDate birthDate,
