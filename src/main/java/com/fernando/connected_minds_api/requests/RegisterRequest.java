@@ -8,13 +8,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
+import org.hibernate.validator.constraints.Length;
 
 public record RegisterRequest(
         @NotNull(message = "username field is required")
         @NotEmpty(message = "username field not should be empty")
         @Pattern(
-            regexp = "^[a-z][a-zA-Z0-9_]*",
-            message = "username field should be starts with lower case letter and can include this characters: [a-z], [A-Z], [0-9], _")
+            regexp = "[A-Za-z0-9_]+",
+            message = "username field must have lower case and upercase letters, numbers and include this characters: [_]")
         String username,
 
         @NotNull(message = "email field is required")
@@ -23,11 +24,11 @@ public record RegisterRequest(
 
         @NotNull(message = "password field is required")
         @NotEmpty(message = "password field not should be empty")
+        @Length(min = 6, message = "password field must be a minimun 6 characteres")
         String password,
 
         String photoURL,
 
-        @NotNull(message = "bannerURL field is required")
         String bannerURL,
 
         @NotNull(message = "genre field is required")
