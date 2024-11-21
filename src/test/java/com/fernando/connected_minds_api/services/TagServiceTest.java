@@ -66,8 +66,8 @@ public class TagServiceTest {
         );
 
         List<TagRequest> tagsRequest = List.of(
-            new TagRequest(ids.get(0).toString(), "Tag1"),
-            new TagRequest(ids.get(1).toString(), "Tag2"),
+            new TagRequest(ids.get(0), "Tag1"),
+            new TagRequest(ids.get(1), "Tag2"),
             new TagRequest(null, "Tag3"),
             new TagRequest(null, "Tag4")
         );
