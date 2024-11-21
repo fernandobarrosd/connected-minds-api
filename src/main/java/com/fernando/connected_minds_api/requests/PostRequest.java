@@ -3,7 +3,6 @@ package com.fernando.connected_minds_api.requests;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import com.fernando.connected_minds_api.enums.PostLocationType;
-import com.fernando.connected_minds_api.annotations.EnumValidator;
 import java.util.UUID;
 
 public record PostRequest(
@@ -17,5 +16,4 @@ public record PostRequest(
         UUID locationID,
         
         @NotNull(message = "content field is required")
-        @EnumValidator(enumValues = {"COMMUNITY", "GROUP"},  message = "locationType field should be COMMUNITY or GROUP")
         PostLocationType locationType) {}
