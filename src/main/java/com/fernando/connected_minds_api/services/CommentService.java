@@ -1,5 +1,6 @@
 package com.fernando.connected_minds_api.services;
 
+import com.fernando.connected_minds_api.enums.NotificationType;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import com.fernando.connected_minds_api.models.Comment;
@@ -8,9 +9,11 @@ import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
+import com.fernando.connected_minds_api.requests.NotificationRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
+import com.fernando.connected_minds_api.responses.NotificationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +27,25 @@ import java.util.UUID;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final LikeCommentService likeCommentService;
+    private final NotificationService notificationService;
 
     public CommentResponse saveComment(String content, User user, Post post) {
         Comment comment = new Comment(content, user, post);
 
         commentRepository.save(comment);
+        User postOwner = post.getOwner();
+
+        String notificationContent = "O %s comentou no post do %s".formatted(user.getUsername(), postOwner.getUsername());
+
+        var notificationRequest = new NotificationRequest(
+            comment.getId(),
+            notificationContent,
+            null,
+            NotificationType.COMMENT
+        );
+        NotificationResponse notificationResponse = notificationService.saveNotification(notificationRequest, user);
+
+        notificationService.sendNotification(postOwner.getId(), notificationResponse);
 
         return CommentResponse.toResponse(comment);
     }
@@ -71,13 +88,31 @@ public class CommentService {
                 .map(CommentResponse::toResponse)
                 .toList();
     }
-    public CommentResponse createCommentOfComment(UUID commentID, CommentRequest commentRequest, User owner) {
+    public CommentResponse saveCommentOfComment(UUID commentID, CommentRequest commentRequest, User owner) {
         Comment comment = commentRepository.findById(commentID)
                 .orElseThrow(() -> new EntityNotFoundException("Comment is not exists"));
 
         Comment commentOfComment = new Comment(commentRequest.content(), comment, owner, comment.getPost());
         commentRepository.save(commentOfComment);
 
+        User commentOwner = comment.getOwner();
+
+        String content = "O %s comentou o comentario %s do %s".formatted(
+            owner.getUsername(),
+            comment.getContent(),
+            commentOwner.getUsername()
+        );
+
+        var notificationRequest = new NotificationRequest(
+            commentOfComment.getId(),
+            content,
+            null,
+            NotificationType.COMMENT
+        );
+
+        NotificationResponse notificationResponse = notificationService.saveNotification(notificationRequest, owner);
+
+        notificationService.sendNotification(commentOwner.getId(), notificationResponse);
         return CommentResponse.toResponse(commentOfComment);
     }
 
