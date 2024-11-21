@@ -49,6 +49,11 @@ public class GroupService {
         }
    }
 
+   public Group findGroupByID(UUID groupID) {
+        return groupRepository.findById(groupID)
+                .orElseThrow(() -> new EntityNotFoundException("Community or group is not exists"));
+   }
+
     public List<GroupResponse> findAllGroups(UUID communityID, Pageable pageable) {
         List<Group> groups = groupRepository.findAllByCommunityId(communityID, pageable);
         
