@@ -51,7 +51,7 @@ public class CommentController {
             @RequestBody @Valid CommentRequest commentRequest) {
 
         return ResponseEntity.created(null).body(
-                commentService.createCommentOfComment(commentID, commentRequest, owner));
+                commentService.saveCommentOfComment(commentID, commentRequest, owner));
     }
 
 
