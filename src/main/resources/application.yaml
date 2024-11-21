@@ -1,3 +1,4 @@
+logging.level.org.springframework.web: DEBUG
 spring:
   application:
       name: connected-minds-api
@@ -10,6 +11,6 @@ spring:
     properties:
       hibernate.format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
   security:
     secret-key: secret
