@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
 import com.fernando.connected_minds_api.models.Invite;
 import com.fernando.connected_minds_api.repositories.InviteRepository;
+import com.fernando.connected_minds_api.requests.InviteRequest;
 import com.fernando.connected_minds_api.responses.InviteResponse;
 import lombok.RequiredArgsConstructor;
 import com.fernando.connected_minds_api.models.User;
@@ -18,25 +19,18 @@ public class InviteService {
     private final GroupService groupService;
 
 
-    public InviteResponse createInvite(UUID fromID) {
-        Boolean fromIDIsNotExists = false;
-        InviteType inviteType = null;
-
-        if (communityService.communityIsExists(fromID)) {
-            inviteType = InviteType.COMMUNITY;
-        }
-        else if (groupService.groupIsExists(fromID)) {
-            inviteType = InviteType.GROUP;
+    public InviteResponse createInvite(InviteRequest inviteRequest) {
+        if (inviteRequest.type() == InviteType.COMMUNITY) {
+            communityService.existsCommunityById(inviteRequest.fromID());
         }
         else {
-            fromIDIsNotExists = true;
+            groupService.existsGroupById(inviteRequest.fromID());
         }
 
-        if (fromIDIsNotExists) {
-            throw new EntityNotFoundException("Community or group is not exists");
-        }
-
-        Invite invite = new Invite(fromID, inviteType);
+        Invite invite = new Invite(
+            inviteRequest.fromID(), 
+            inviteRequest.type()
+        );
 
         inviteRepository.save(invite);
 
@@ -48,6 +42,7 @@ public class InviteService {
         Invite invite = inviteRepository.findById(inviteID)
         .orElseThrow(() -> new EntityNotFoundException("Invite is not exists"));
 
+        
         if (invite.getType() == InviteType.COMMUNITY) {
             communityService.addMemberOnCommunity(invite.getFromID(), user);
         }
