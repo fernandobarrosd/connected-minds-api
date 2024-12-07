@@ -1,7 +1,6 @@
 package com.fernando.connected_minds_api.responses;
 
 import java.util.UUID;
-import java.time.LocalDateTime;
 import com.fernando.connected_minds_api.enums.NotificationType;
 import com.fernando.connected_minds_api.models.Notification;
 
@@ -11,7 +10,7 @@ public record NotificationResponse(
     String content,
     String photoURL,
     NotificationType type,
-    LocalDateTime createdAt) {
+    String createdAt) {
 
         public static NotificationResponse toResponse(Notification notification) {
             return new NotificationResponse(
@@ -20,7 +19,7 @@ public record NotificationResponse(
                 notification.getContent(),
                 notification.getPhotoURL(),
                 notification.getType(),
-                notification.getCreatedAt()
+                notification.getCreatedAt().toString()
             );
         } 
     
