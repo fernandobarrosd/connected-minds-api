@@ -18,7 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public interface AuthControllerDocumentation {
     @Operation(
         summary = "Authenticate user endpoint",
-        method = "POST"
+        method = "POST",
+        operationId = "loginUser"
     )
     @ApiResponses({
         @ApiResponse(
@@ -48,7 +49,8 @@ public interface AuthControllerDocumentation {
 
     @Operation(
         description = "Register user and authenticate",
-        method = "POST"
+        method = "POST",
+        operationId = "registerUser"
     )
     @ApiResponses({
         @ApiResponse(
@@ -78,7 +80,8 @@ public interface AuthControllerDocumentation {
 
     @Operation(
         description = "Generate new JWT token",
-        method = "POST"
+        method = "POST",
+        operationId = "generateNewToken"
     )
     @ApiResponses({
         @ApiResponse(
