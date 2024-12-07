@@ -13,13 +13,14 @@ public record PostResponse(
         String photoURL,
         Long likes,
         UUID locationID,
-        OwnerResponse owner) {
+        OwnerResponse owner,
+        Long commentsCount) {
 
     public static PostResponse toResponse(Post post) {
         User owner = post.getOwner();
 
         OwnerResponse ownerResponse = OwnerResponse.toResponse(owner);
-
+        
         return PostResponse.builder()
                 .id(post.getId())
                 .locationID(post.getLocationID())
@@ -28,6 +29,7 @@ public record PostResponse(
                 .photoURL(post.getPhotoURL())
                 .createdAt(post.getCreatedAt().toString())
                 .owner(ownerResponse)
+                .commentsCount(post.getComments().stream().count())
                 .build();
     }
 }
