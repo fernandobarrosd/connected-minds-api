@@ -12,6 +12,7 @@ import com.fernando.connected_minds_api.services.InviteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.fernando.connected_minds_api.documentation.InviteControllerDocumentation;
 import com.fernando.connected_minds_api.models.User;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.UUID;
@@ -19,12 +20,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/invites")
 @RequiredArgsConstructor
-public class InviteController {
+public class InviteController implements InviteControllerDocumentation {
     private final InviteService inviteService;
 
     @PostMapping
     public ResponseEntity<InviteResponse> createInvite(@RequestBody @Valid InviteRequest inviteRequest) {
-        return ResponseEntity.created(null).body(inviteService.createInvite(inviteRequest.fromID()));
+        return ResponseEntity.created(null).body(inviteService.createInvite(inviteRequest));
     }
 
     @GetMapping("/{inviteID}/accept")
