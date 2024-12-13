@@ -1,5 +1,7 @@
 package com.fernando.connected_minds_api.controllers;
 
+import com.fernando.connected_minds_api.documentation.PostControllerDocumentation;
+import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.FindAllPostsRequest;
@@ -8,6 +10,7 @@ import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
+import com.fernando.connected_minds_api.responses.CreatePostResponse;
 import com.fernando.connected_minds_api.services.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +24,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
-public class PostController {
+public class PostController implements PostControllerDocumentation {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(
+    public ResponseEntity<CreatePostResponse> createPost(
             @AuthenticationPrincipal User user,
             @RequestBody @Valid PostRequest postRequest) {
         return ResponseEntity.created(null).body(postService.createPost(postRequest, user));
@@ -76,7 +79,7 @@ public class PostController {
 
 
     @PostMapping("/{postID}/likes")
-    public ResponseEntity<?> createLike(
+    public ResponseEntity<LikePost> createLike(
         @AuthenticationPrincipal User user,
         @PathVariable UUID postID) {
 

@@ -13,7 +13,6 @@ import com.fernando.connected_minds_api.requests.NotificationRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
 import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
-import com.fernando.connected_minds_api.responses.NotificationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,9 +42,7 @@ public class CommentService {
             null,
             NotificationType.COMMENT
         );
-        NotificationResponse notificationResponse = notificationService.saveNotification(notificationRequest, user);
-
-        notificationService.sendNotification(postOwner.getId(), notificationResponse);
+        notificationService.saveNotification(notificationRequest, user);
 
         return CommentResponse.toResponse(comment);
     }
@@ -110,9 +107,8 @@ public class CommentService {
             NotificationType.COMMENT
         );
 
-        NotificationResponse notificationResponse = notificationService.saveNotification(notificationRequest, owner);
-
-        notificationService.sendNotification(commentOwner.getId(), notificationResponse);
+        notificationService.saveNotification(notificationRequest, owner);
+        
         return CommentResponse.toResponse(commentOfComment);
     }
 

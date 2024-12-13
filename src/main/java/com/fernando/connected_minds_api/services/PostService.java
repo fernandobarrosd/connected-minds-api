@@ -18,6 +18,8 @@ import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.NotificationResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
+import com.fernando.connected_minds_api.responses.CreatePostResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -39,7 +41,7 @@ public class PostService {
     private final LikePostService likePostService;
     private final NotificationService notificationService;
 
-    public PostResponse createPost(PostRequest postRequest, User owner) {
+    public CreatePostResponse createPost(PostRequest postRequest, User owner) {
         UUID locationID = postRequest.locationID();
         NotificationType notificationType = NotificationType.POST;
         Map<String, Object> data = new HashMap<>();
@@ -75,12 +77,10 @@ public class PostService {
         );
         NotificationResponse notificationResponse = notificationService.saveNotification(request, owner);
 
-
-        members.forEach(member -> {
-            notificationService.sendNotification(member.getId(), notificationResponse);
-        });
+        List<String> membersUsernames = members.stream()
+        .map(member -> member.getUsername()).toList();
         
-        return PostResponse.toResponse(post);
+        return CreatePostResponse.toResponse(post, membersUsernames, notificationResponse.id());
     }
 
     public List<PostResponse> findAllPosts(FindAllPostsRequest request) {

@@ -3,8 +3,12 @@ package com.fernando.connected_minds_api.services;
 import java.util.UUID;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import com.fernando.connected_minds_api.enums.NotificationType;
 import com.fernando.connected_minds_api.models.Notification;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.payloads.NotificationPayload;
+import com.fernando.connected_minds_api.payloads.PostNotificationPayload;
 import com.fernando.connected_minds_api.repositories.NotificationRepository;
 import com.fernando.connected_minds_api.requests.NotificationRequest;
 import com.fernando.connected_minds_api.responses.NotificationResponse;
@@ -26,7 +30,32 @@ public class NotificationService {
     }
 
 
-    public void sendNotification(UUID userID, NotificationResponse notificationResponse) {
-        simpMessagingTemplate.convertAndSendToUser(userID.toString(), "/topic/notifications", notificationResponse);
+    public void sendNotification(User user, UUID notificationID, NotificationPayload notificationPayload) {
+        Notification notification = notificationRepository.findById(notificationID).get();
+        NotificationResponse notificationResponse = NotificationResponse.toResponse(notification);
+
+        if (notificationPayload instanceof PostNotificationPayload postNotificationPayload) {
+            sendPostNotification(postNotificationPayload, notificationResponse);
+        }
+    }
+
+    public void sendPostNotification(
+        PostNotificationPayload postNotificationPayload,
+        NotificationResponse notificationResponse) {
+            postNotificationPayload.getLocationMembersUsernames().forEach(username -> {
+                sendNotificationToDestination(
+                    username,
+                    notificationResponse
+                );
+            });
+       
+    }
+
+    public void sendNotificationToDestination(String username, Object payload) {
+        simpMessagingTemplate.convertAndSendToUser(
+                    username,
+                    "topic/notifications",
+                    payload
+        );
     }
 }
