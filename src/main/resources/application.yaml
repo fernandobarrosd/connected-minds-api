@@ -1,7 +1,3 @@
-org.springframework.security.messaging.web.socket: DEBUG
-org.springframework.web.socket.server: DEBUG
-logging.level.org.springframework.messaging: DEBUG
-
 springdoc:
   swagger-ui:
     path: /docs/ui
