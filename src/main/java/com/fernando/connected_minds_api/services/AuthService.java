@@ -49,7 +49,7 @@ public class AuthService implements UserDetailsService {
         try {
             auth = authManager.authenticate(usernamePasswordToken);
         }
-        catch (AuthenticationException exception) {
+        catch (Exception exception) {
             throw new EntityNotFoundException("User is not exists");
         }
         User user = (User) auth.getPrincipal();
@@ -57,7 +57,15 @@ public class AuthService implements UserDetailsService {
         String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
-        return new AuthResponse(token, refreshToken, expiresAt);
+        return new AuthResponse(
+            token, 
+            refreshToken, 
+            expiresAt,
+            user.getUsername(),
+            user.getPhotoURL(),
+            user.getBannerURL(),
+            user.getBio()
+        );
     }
 
     public AuthResponse generateNewToken(RefreshTokenRequest request) {
@@ -74,7 +82,15 @@ public class AuthService implements UserDetailsService {
         String newToken = jwtService.generateJWT(user);
         String expiresAt = jwtService.getExpiresAt(newToken).get();
 
-        return new AuthResponse(newToken, refreshToken, expiresAt);
+        return new AuthResponse(
+            newToken, 
+            refreshToken, 
+            expiresAt,
+            user.getUsername(),
+            user.getPhotoURL(),
+            user.getBannerURL(),
+            user.getBio()
+        );
 
     }
 
@@ -103,7 +119,14 @@ public class AuthService implements UserDetailsService {
         String refreshToken = jwtService.generateRefreshToken(user.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
-        return new AuthResponse(token, refreshToken, expiresAt);
-
+        return new AuthResponse(
+            token, 
+            refreshToken, 
+            expiresAt,
+            user.getUsername(),
+            user.getPhotoURL(),
+            user.getBannerURL(),
+            user.getBio()
+        );
     }
 }
