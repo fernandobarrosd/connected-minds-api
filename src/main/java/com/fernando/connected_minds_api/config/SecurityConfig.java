@@ -35,10 +35,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(httpRequest -> httpRequest
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/token").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/h2-console", "/h2-console/**", "/docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/h2-console", "/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ws/**", "/h2-console", "/h2-console/**", "/docs/**", "/users/**", "/search").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
