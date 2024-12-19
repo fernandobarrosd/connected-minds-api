@@ -1,9 +1,7 @@
 package com.fernando.connected_minds_api.payloads;
 
 import java.util.List;
-
 import com.fernando.connected_minds_api.enums.NotificationType;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
