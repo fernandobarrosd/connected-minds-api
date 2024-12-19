@@ -1,4 +1,4 @@
-package com.fernando.connected_minds_api.documentation;
+package com.fernando.connected_minds_api.docs;
 
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;

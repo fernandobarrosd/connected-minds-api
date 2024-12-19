@@ -1,4 +1,4 @@
-package com.fernando.connected_minds_api.documentation;
+package com.fernando.connected_minds_api.docs;
 
 import org.springframework.http.ResponseEntity;
 import com.fernando.connected_minds_api.requests.LoginRequest;

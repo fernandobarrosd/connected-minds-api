@@ -1,17 +1,17 @@
-package com.fernando.connected_minds_api.documentation;
+package com.fernando.connected_minds_api.docs;
 
-import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.FindAllPostsQueryParams;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.requests.CommentRequest;
-import com.fernando.connected_minds_api.requests.FindAllPostsRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.CreatePostResponse;
+import com.fernando.connected_minds_api.responses.PaginationResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -69,13 +69,7 @@ public interface PostControllerDocumentation {
     @Operation(
         summary = "Find all posts",
         method = "GET",
-        operationId = "findAllPosts",
-        requestBody = @RequestBody(
-            required = true,
-            content = @Content(
-                schema = @Schema(implementation = FindAllPostsRequest.class)
-            )
-        )
+        operationId = "findAllPosts"
     )
     @ApiResponses({
         @ApiResponse(
@@ -105,7 +99,7 @@ public interface PostControllerDocumentation {
             )
         )
     })
-    ResponseEntity<List<PostResponse>> findAllPosts(FindAllPostsRequest request);
+    ResponseEntity<PaginationResponse<PostResponse>> findAllPosts(FindAllPostsQueryParams queryParams);
 
 
 
@@ -283,7 +277,7 @@ public interface PostControllerDocumentation {
             )
         )
     })
-    ResponseEntity<List<CommentResponse>> findAllComments(
+    ResponseEntity<PaginationResponse<CommentResponse>> findAllComments(
         UUID postID,
         PaginationQueryParams pagination
     );
