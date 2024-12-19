@@ -3,7 +3,6 @@ package com.fernando.connected_minds_api.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fernando.connected_minds_api.enums.UserGenre;
 import com.fernando.connected_minds_api.enums.UserStatus;
-import com.fernando.connected_minds_api.enums.converters.UserGenreConverter;
 import com.fernando.connected_minds_api.models.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -48,7 +47,7 @@ public class User extends BaseEntity implements UserDetails {
     private UserStatus status;
 
     @Column(nullable = false)
-    @Convert(converter = UserGenreConverter.class)
+    @Enumerated(EnumType.STRING)
     private UserGenre genre;
 
     @ManyToMany(mappedBy = "members")
