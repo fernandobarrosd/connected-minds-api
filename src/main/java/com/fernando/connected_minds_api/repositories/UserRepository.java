@@ -13,7 +13,9 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
+
     @Query("SELECT u.communities FROM User u WHERE u.id = :userID")
     List<Community> findAllCommunities(UUID userID, Pageable pageable);
+    
     Page<User> findAllByUsernameContaining(String username, Pageable pageable);
 }
