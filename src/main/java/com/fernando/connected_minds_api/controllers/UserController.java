@@ -1,7 +1,7 @@
 package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.User;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.UserResponse;
 import com.fernando.connected_minds_api.services.UserService;
