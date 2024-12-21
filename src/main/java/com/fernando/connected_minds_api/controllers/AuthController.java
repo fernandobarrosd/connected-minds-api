@@ -1,6 +1,6 @@
 package com.fernando.connected_minds_api.controllers;
 
-import com.fernando.connected_minds_api.documentation.AuthControllerDocumentation;
+import com.fernando.connected_minds_api.docs.AuthControllerDocumentation;
 import com.fernando.connected_minds_api.requests.LoginRequest;
 import com.fernando.connected_minds_api.requests.RefreshTokenRequest;
 import com.fernando.connected_minds_api.requests.RegisterRequest;
