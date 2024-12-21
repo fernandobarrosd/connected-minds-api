@@ -1,4 +1,4 @@
-package com.fernando.connected_minds_api.requests.params;
+package com.fernando.connected_minds_api.queryparams;
 
 import java.util.UUID;
 import com.fernando.connected_minds_api.annotations.EnumValidator;

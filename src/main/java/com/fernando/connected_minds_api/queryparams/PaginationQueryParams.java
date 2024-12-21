@@ -1,4 +1,4 @@
-package com.fernando.connected_minds_api.requests.params;
+package com.fernando.connected_minds_api.queryparams;
 
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
