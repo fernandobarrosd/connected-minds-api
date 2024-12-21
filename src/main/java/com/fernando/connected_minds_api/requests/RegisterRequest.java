@@ -31,6 +31,9 @@ public record RegisterRequest(
 
         String bannerURL,
 
+        @NotEmpty(message = "bio field not should be empty")
+        String bio,
+
         @NotNull(message = "genre field is required")
         @EnumValidator(enumValues = {"MALE", "FEMALE"}, message = "genre field should be MALE or FEMALE")
         String genre,
@@ -42,6 +45,7 @@ public record RegisterRequest(
     public User toEntity() {
         LocalDate birthDateFormatted = LocalDate.parse(birthDate);
         return new User(username, email, password,
-                birthDateFormatted, photoURL, bannerURL, UserGenre.valueOf(genre));
+                birthDateFormatted, photoURL, bannerURL, bio, 
+                UserGenre.valueOf(genre));
     }
 }
