@@ -60,7 +60,7 @@ public class User extends BaseEntity implements UserDetails {
     private List<Notification> notifications;
 
     public User(String username, String email, String password, LocalDate birthDate,
-                String bannerURL, String photoURL, UserGenre genre) {
+                String bannerURL, String photoURL, String bio, UserGenre genre) {
         super(null);
         this.username = username;
         this.email = email;
@@ -68,6 +68,7 @@ public class User extends BaseEntity implements UserDetails {
         this.birthDate = birthDate;
         this.bannerURL = bannerURL;
         this.photoURL = photoURL;
+        this.bio = bio;
         this.genre = genre;
         this.status = UserStatus.OFFLINE;
         this.communities = List.of();
@@ -76,7 +77,7 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     public User(UUID id, String username, String email, String password, LocalDate birthDate,
-                String bannerURL, String photoURL, UserGenre genre) {
+                String bannerURL, String photoURL, String bio, UserGenre genre) {
         super(id);
         this.username = username;
         this.email = email;
@@ -84,6 +85,7 @@ public class User extends BaseEntity implements UserDetails {
         this.birthDate = birthDate;
         this.bannerURL = bannerURL;
         this.photoURL = photoURL;
+        this.bio = bio;
         this.genre = genre;
         this.status = UserStatus.OFFLINE;
         this.communities = List.of();
