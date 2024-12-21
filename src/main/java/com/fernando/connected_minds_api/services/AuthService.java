@@ -11,11 +11,12 @@ import com.fernando.connected_minds_api.requests.RefreshTokenRequest;
 import com.fernando.connected_minds_api.requests.RegisterRequest;
 import com.fernando.connected_minds_api.responses.AuthResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,16 +41,14 @@ public class AuthService implements UserDetailsService {
     public AuthResponse authenticate(LoginRequest loginRequest) {
         var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
                 loginRequest.email(),
-                loginRequest.password()
-        );
+                loginRequest.password());
         Authentication auth;
 
         var authManager = applicationContext.getBean(AuthenticationManager.class);
 
         try {
             auth = authManager.authenticate(usernamePasswordToken);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new EntityNotFoundException("User is not exists");
         }
         User user = (User) auth.getPrincipal();
@@ -58,14 +57,14 @@ public class AuthService implements UserDetailsService {
         String expiresAt = jwtService.getExpiresAt(token).get();
 
         return new AuthResponse(
-            token, 
-            refreshToken, 
-            expiresAt,
-            user.getUsername(),
-            user.getPhotoURL(),
-            user.getBannerURL(),
-            user.getBio()
-        );
+                token,
+                refreshToken,
+                expiresAt,
+                user.getId(),
+                user.getUsername(),
+                user.getPhotoURL(),
+                user.getBannerURL(),
+                user.getBio());
     }
 
     public AuthResponse generateNewToken(RefreshTokenRequest request) {
@@ -83,19 +82,20 @@ public class AuthService implements UserDetailsService {
         String expiresAt = jwtService.getExpiresAt(newToken).get();
 
         return new AuthResponse(
-            newToken, 
-            refreshToken, 
-            expiresAt,
-            user.getUsername(),
-            user.getPhotoURL(),
-            user.getBannerURL(),
-            user.getBio()
-        );
+                newToken,
+                refreshToken,
+                expiresAt,
+                user.getId(),
+                user.getUsername(),
+                user.getPhotoURL(),
+                user.getBannerURL(),
+                user.getBio());
 
     }
 
     public AuthResponse registerUser(RegisterRequest request) {
         User user = request.toEntity();
+        User userSaved = null;
 
         Integer currentYear = LocalDate.now().getYear();
         Integer birthYear = user.getBirthDate().getYear();
@@ -108,25 +108,25 @@ public class AuthService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        
         try {
-            userRepository.save(user);
-        }
-        catch (IllegalArgumentException exception) {
+            userSaved = userRepository.save(user);
+        } catch (IllegalArgumentException exception) {
+            System.out.println(exception.getMessage());
             throw new EntityAlreadyExistsException("User is already exists");
         }
+
         String token = jwtService.generateJWT(user);
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
+        String refreshToken = jwtService.generateRefreshToken(userSaved.getId());
         String expiresAt = jwtService.getExpiresAt(token).get();
 
         return new AuthResponse(
-            token, 
-            refreshToken, 
-            expiresAt,
-            user.getUsername(),
-            user.getPhotoURL(),
-            user.getBannerURL(),
-            user.getBio()
-        );
+                token,
+                refreshToken,
+                expiresAt,
+                userSaved.getId(),
+                user.getUsername(),
+                user.getPhotoURL(),
+                user.getBannerURL(),
+                user.getBio());
     }
 }
