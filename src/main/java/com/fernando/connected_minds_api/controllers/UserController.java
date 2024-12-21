@@ -4,13 +4,14 @@ import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.UserResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
 import com.fernando.connected_minds_api.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/users")
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/communities")
-    public ResponseEntity<List<CommunityResponse>> findAllUserCommunities(
+    public ResponseEntity<PaginationResponse<CommunityResponse>> findAllUserCommunities(
             @AuthenticationPrincipal User user,
             @Valid PaginationQueryParams pagination) {
         return ResponseEntity.ok(
