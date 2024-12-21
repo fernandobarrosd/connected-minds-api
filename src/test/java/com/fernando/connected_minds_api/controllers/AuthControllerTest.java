@@ -25,6 +25,7 @@ import com.fernando.connected_minds_api.responses.AuthResponse;
 import com.fernando.connected_minds_api.responses.error.ErrorResponse;
 import com.fernando.connected_minds_api.services.AuthService;
 import com.fernando.connected_minds_api.services.JWTService;
+import java.util.UUID;
 
 @WebMvcTest(AuthController.class)
 public class AuthControllerTest {
@@ -48,7 +49,20 @@ public class AuthControllerTest {
     @WithMockUser(username = "user", roles = "USER")
     public void shouldAuthenticateUserWithSuccess() throws Exception {
         String instant = generateInstant(2024, 9, 5, 12, 30);
-        AuthResponse authResponse = new AuthResponse("jwt-token", "refresh-token", instant);
+        UUID userID = UUID.randomUUID();
+        
+        AuthResponse authResponse = new AuthResponse(
+            "jwt-token", 
+            "refresh-token", 
+            instant,
+            userID,
+            "fernandobarrosd",
+            null,
+            null,
+            null
+        );
+        
+
         LoginRequest loginRequest = new LoginRequest("fernandotest@test.com", "ftest");
 
         when(authService.authenticate(loginRequest)).thenReturn(authResponse);
