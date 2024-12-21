@@ -2,10 +2,11 @@ package com.fernando.connected_minds_api.controllers;
 
 import com.fernando.connected_minds_api.models.LikeComment;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
 import com.fernando.connected_minds_api.services.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import com.fernando.connected_minds_api.docs.CommentControllerDocumentation;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/comments")
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentController implements CommentControllerDocumentation {
     private final CommentService commentService;
 
     @GetMapping("/{commentID}")
@@ -56,10 +57,10 @@ public class CommentController {
 
 
     @GetMapping("/{commentID}/comments")
-    public ResponseEntity<List<CommentResponse>> findAllCommentsOfComment(
+    public ResponseEntity<PaginationResponse<CommentResponse>> findAllCommentsOfComment(
             @PathVariable UUID commentID,
-            @Valid PaginationQueryParams pagination) {
-        return ResponseEntity.ok(commentService.findAllCommentsOfComment(commentID, pagination));
+            @Valid PaginationQueryParams queryParams) {
+        return ResponseEntity.ok(commentService.findAllCommentsOfComment(commentID, queryParams));
     }
 
     @PostMapping("/{commentID}/likes")
