@@ -5,20 +5,24 @@ import com.fernando.connected_minds_api.exceptions.UserIsAlreadyExiststInCommuni
 import com.fernando.connected_minds_api.models.Community;
 import com.fernando.connected_minds_api.models.Tag;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.repositories.CommunityRepository;
 import com.fernando.connected_minds_api.requests.CommunityRequest;
 import com.fernando.connected_minds_api.requests.GroupRequest;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
 import com.fernando.connected_minds_api.responses.GroupResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+
 
 @Service
 @RequiredArgsConstructor
@@ -101,4 +105,21 @@ public class CommunityService {
         return communityRepository.existsById(communityID);
     }
 
+    public PaginationResponse<CommunityResponse> searchCommunity(String search, Integer page, Integer itemsPerPage) {
+        Pageable pageable = PageRequest.of(page, itemsPerPage);
+        Page<Community> communityPage = communityRepository.findAllByNameContaining(search, pageable);
+
+        List<CommunityResponse> communities = communityPage.get()
+        .map(CommunityResponse::toResponse)
+        .toList();
+
+        return PaginationResponse.toResponse(
+                communityPage.hasNext(),
+                communityPage.getTotalPages(),
+                communityPage.getTotalElements(),
+                itemsPerPage,
+                page,
+                communities
+        );
+    }
 }
