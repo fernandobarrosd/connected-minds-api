@@ -3,8 +3,6 @@ package com.fernando.connected_minds_api.services;
 import java.util.UUID;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
-import com.fernando.connected_minds_api.enums.NotificationType;
 import com.fernando.connected_minds_api.models.Notification;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.payloads.NotificationPayload;
