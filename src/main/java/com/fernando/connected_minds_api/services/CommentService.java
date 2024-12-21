@@ -7,13 +7,16 @@ import com.fernando.connected_minds_api.models.Comment;
 import com.fernando.connected_minds_api.models.LikeComment;
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.repositories.CommentRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
 import com.fernando.connected_minds_api.requests.NotificationRequest;
 import com.fernando.connected_minds_api.requests.UpdateCommentRequest;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -47,13 +50,23 @@ public class CommentService {
         return CommentResponse.toResponse(comment);
     }
 
-    public List<CommentResponse> findAllComments(PaginationQueryParams pagination, UUID postID) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage(), Sort.by("likes").descending());
+    public PaginationResponse<CommentResponse> findAllComments(Integer page, Integer itemsPerPage, UUID postID) {
+        Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
 
-        return commentRepository.findAllByPostId(postID, pageable)
-                .stream()
-                .map(CommentResponse::toResponse)
-                .toList();
+        Page<Comment> commentPage = commentRepository.findAllByPostId(postID, pageable);
+
+        List<CommentResponse> comments = commentPage.get()
+        .map(CommentResponse::toResponse)
+        .toList();
+
+        return PaginationResponse.toResponse(
+            commentPage.hasNext(),
+            commentPage.getTotalPages(),
+            commentPage.getTotalElements(),
+            itemsPerPage,
+            page,
+            comments
+        );
     }
 
     public CommentResponse findCommentById(UUID commentID) {
@@ -75,15 +88,29 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    public List<CommentResponse> findAllCommentsOfComment(UUID commentID, PaginationQueryParams pagination) {
+    public PaginationResponse<CommentResponse> findAllCommentsOfComment(UUID commentID, PaginationQueryParams queryParams) {
+        Integer itemsPerPage = queryParams.getItemsPerPage();
+        Integer page = queryParams.getPage();
+
         if (!commentRepository.existsById(commentID)) {
             throw new EntityNotFoundException("Comment is not exists");
         }
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getItemsPerPage(), Sort.by("likes").descending());
-        return commentRepository.findAllCommentsOfComment(commentID, pageable)
-                .stream()
-                .map(CommentResponse::toResponse)
-                .toList();
+        Pageable pageable = PageRequest.of(page, itemsPerPage, Sort.by("likes").descending());
+
+        Page<Comment> commentPage = commentRepository.findAllCommentsOfComment(commentID, pageable);
+
+        List<CommentResponse> comments = commentPage.get()
+        .map(CommentResponse::toResponse)
+        .toList();
+
+        return PaginationResponse.toResponse(
+            commentPage.hasNext(),
+            commentPage.getTotalPages(),
+            commentPage.getTotalElements(),
+            itemsPerPage,
+            page,
+            comments
+        );
     }
     public CommentResponse saveCommentOfComment(UUID commentID, CommentRequest commentRequest, User owner) {
         Comment comment = commentRepository.findById(commentID)
