@@ -1,7 +1,11 @@
 package com.fernando.connected_minds_api.docs;
 
 import java.util.UUID;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+
+import com.fernando.connected_minds_api.docs.responses.CommentPaginationResponse;
+import com.fernando.connected_minds_api.docs.responses.PostPaginationResponse;
 import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.User;
 import com.fernando.connected_minds_api.queryparams.FindAllPostsQueryParams;
@@ -11,10 +15,8 @@ import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.CreatePostResponse;
-import com.fernando.connected_minds_api.responses.PaginationResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fernando.connected_minds_api.responses.error.ErrorResponse;
 import com.fernando.connected_minds_api.responses.error.ErrorResponseWithFields;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
 
 @Tag(name = "Post", description = "Post actions")
 public interface PostControllerDocumentation {
@@ -47,8 +50,16 @@ public interface PostControllerDocumentation {
             )
         ),
         @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
             responseCode = "404",
-            description = "Not found",
+            description = "Community or group is not exists",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ErrorResponse.class)
@@ -77,9 +88,7 @@ public interface PostControllerDocumentation {
             description = "Posts are finded",
             content = @Content(
                 mediaType = "application/json",
-                array = @ArraySchema(
-                    schema = @Schema(implementation = PostResponse.class)
-                )
+                schema = @Schema(implementation = PostPaginationResponse.class)
                 
             )
         ),
@@ -91,6 +100,14 @@ public interface PostControllerDocumentation {
             ) 
         ),
         @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
             responseCode = "404",
             description = "Not found",
             content = @Content(
@@ -99,7 +116,9 @@ public interface PostControllerDocumentation {
             )
         )
     })
-    ResponseEntity<PaginationResponse<PostResponse>> findAllPosts(FindAllPostsQueryParams queryParams);
+    ResponseEntity<PaginationResponse<PostResponse>> findAllPosts(
+       @ParameterObject FindAllPostsQueryParams queryParams
+    );
 
 
 
@@ -117,6 +136,15 @@ public interface PostControllerDocumentation {
                 schema = @Schema(implementation = PostResponse.class)
             )
         ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        
         @ApiResponse(
             responseCode = "404",
             description = "Post is not found",
@@ -157,6 +185,14 @@ public interface PostControllerDocumentation {
             ) 
         ),
         @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
             responseCode = "403",
             description = "Authenticated user is not owner of post",
             content = @Content(
@@ -185,6 +221,14 @@ public interface PostControllerDocumentation {
         @ApiResponse(
             responseCode = "204",
             description = "Post is deleted with success"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "403",
@@ -229,6 +273,14 @@ public interface PostControllerDocumentation {
             )
         ),
         @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
             responseCode = "404",
             description = "Post is not found",
             content = @Content(
@@ -256,9 +308,7 @@ public interface PostControllerDocumentation {
             description = "Finded all post comments",
             content = @Content(
                 mediaType = "application/json",
-                array = @ArraySchema(
-                    schema = @Schema(implementation = CommentResponse.class)
-                )
+                schema = @Schema(implementation = CommentPaginationResponse.class)
             )
         ),
         @ApiResponse(
@@ -267,6 +317,14 @@ public interface PostControllerDocumentation {
             content = @Content(
                 schema = @Schema(implementation = ErrorResponseWithFields.class)
             ) 
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "404",
@@ -279,7 +337,7 @@ public interface PostControllerDocumentation {
     })
     ResponseEntity<PaginationResponse<CommentResponse>> findAllComments(
         UUID postID,
-        PaginationQueryParams pagination
+        @ParameterObject PaginationQueryParams pagination
     );
 
 
@@ -294,6 +352,14 @@ public interface PostControllerDocumentation {
             description = "Post like is created",
             content = @Content(
                 schema = @Schema(implementation = LikePost.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "This resource require Authentication header JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
             )
         ),
         @ApiResponse(
