@@ -1,15 +1,16 @@
 package com.fernando.connected_minds_api.controllers;
 
-import com.fernando.connected_minds_api.documentation.PostControllerDocumentation;
+import com.fernando.connected_minds_api.docs.PostControllerDocumentation;
 import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.FindAllPostsQueryParams;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.requests.CommentRequest;
-import com.fernando.connected_minds_api.requests.FindAllPostsRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
 import com.fernando.connected_minds_api.responses.CreatePostResponse;
 import com.fernando.connected_minds_api.services.PostService;
 import jakarta.validation.Valid;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -35,8 +35,9 @@ public class PostController implements PostControllerDocumentation {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> findAllPosts(@Valid @RequestBody FindAllPostsRequest request) {
-        return ResponseEntity.ok(postService.findAllPosts(request));
+    public ResponseEntity<PaginationResponse<PostResponse>> findAllPosts(
+        @Valid FindAllPostsQueryParams queryParams) {
+        return ResponseEntity.ok(postService.findAllPosts(queryParams));
     }
 
     @GetMapping("/{postID}")
@@ -70,11 +71,11 @@ public class PostController implements PostControllerDocumentation {
     }
 
     @GetMapping("/{postID}/comments")
-    public ResponseEntity<List<CommentResponse>> findAllComments(
+    public ResponseEntity<PaginationResponse<CommentResponse>> findAllComments(
             @PathVariable UUID postID,
-            @Valid PaginationQueryParams pagination) {
+            @Valid PaginationQueryParams queryParams) {
 
-        return ResponseEntity.ok(postService.findAllComments(postID, pagination));
+        return ResponseEntity.ok(postService.findAllComments(postID, queryParams));
     }
 
 
