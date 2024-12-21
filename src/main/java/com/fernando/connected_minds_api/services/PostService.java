@@ -6,21 +6,24 @@ import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceExcep
 import com.fernando.connected_minds_api.models.LikePost;
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.FindAllPostsQueryParams;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.models.Community;
 import com.fernando.connected_minds_api.models.Group;
 import com.fernando.connected_minds_api.repositories.PostRepository;
 import com.fernando.connected_minds_api.requests.CommentRequest;
-import com.fernando.connected_minds_api.requests.FindAllPostsRequest;
 import com.fernando.connected_minds_api.requests.NotificationRequest;
 import com.fernando.connected_minds_api.requests.PostRequest;
 import com.fernando.connected_minds_api.requests.UpdatePostRequest;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 import com.fernando.connected_minds_api.responses.CommentResponse;
 import com.fernando.connected_minds_api.responses.NotificationResponse;
 import com.fernando.connected_minds_api.responses.PostResponse;
+import com.fernando.connected_minds_api.responses.pagination.PaginationResponse;
 import com.fernando.connected_minds_api.responses.CreatePostResponse;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
@@ -83,20 +86,36 @@ public class PostService {
         return CreatePostResponse.toResponse(post, membersUsernames, notificationResponse.id());
     }
 
-    public List<PostResponse> findAllPosts(FindAllPostsRequest request) {
-        UUID locationID = request.locationID();
+    public PaginationResponse<PostResponse> findAllPosts(FindAllPostsQueryParams queryParams) {
+        UUID locationID = queryParams.getLocationID();
 
-        if (request.locationType() == PostLocationType.COMMUNITY) {
+        if (queryParams.getLocationType() == PostLocationType.COMMUNITY) {
             communityService.existsCommunityById(locationID);
         }
         else {
             groupService.existsGroupById(locationID);
         }
 
-        return postRepository.findAllByLocationID(locationID)
-            .stream()
-            .map(PostResponse::toResponse)
-            .toList();
+        Pageable pageable = PageRequest.of(
+            queryParams.getPage(),
+            queryParams.getItemsPerPage()
+        );
+
+        Page<Post> postPage = postRepository.findAllByLocationID(locationID, pageable);
+
+
+        List<PostResponse> posts = postPage.get()
+        .map(PostResponse::toResponse)
+        .toList();
+
+        return PaginationResponse.toResponse(
+            postPage.hasNext(),
+            postPage.getTotalPages(),
+            postPage.getTotalElements(),
+            queryParams.getItemsPerPage(),
+            queryParams.getPage(),
+            posts
+        );
     }
 
     public PostResponse findPostByID(UUID postID) {
@@ -147,11 +166,16 @@ public class PostService {
         return PostResponse.toResponse(post);
     }
 
-    public List<CommentResponse> findAllComments(UUID postID, PaginationQueryParams pagination) {
+    public PaginationResponse<CommentResponse> findAllComments(UUID postID, PaginationQueryParams queryParams) {
         if (!postRepository.existsById(postID)) {
             throw new EntityNotFoundException("Post is not exists");
         }
-        return commentService.findAllComments(pagination, postID);
+
+        return commentService.findAllComments(
+            queryParams.getPage(),
+            queryParams.getItemsPerPage(),
+            postID
+        );
     }
 
     public LikePost createLike(User user, UUID postID) {
