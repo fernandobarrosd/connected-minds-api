@@ -1,6 +1,7 @@
 package com.fernando.connected_minds_api.config;
 
 import com.fernando.connected_minds_api.filters.JWTFilter;
+import com.fernando.connected_minds_api.handlers.UnauthorizedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JWTFilter jwtFilter;
+    private final UnauthorizedHandler unauthorizedHandler;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -34,13 +36,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(httpRequest -> httpRequest
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/token").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/h2-console", "/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,  "/auth/login", "/auth/register", "/auth/token", 
+                        "/h2-console", "/h2-console/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/ws/**", "/h2-console", "/h2-console/**", "/docs/**", "/users/**", "/search").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .exceptionHandling(exception -> {
+                    exception.authenticationEntryPoint(unauthorizedHandler);
+                })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
