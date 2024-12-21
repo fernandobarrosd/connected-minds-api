@@ -11,12 +11,13 @@ public record CommentResponse(
         String content,
         Long likes,
         String createdAt,
-        OwnerResponse owner,
+        UserResponse owner,
         UUID postID) {
     public static CommentResponse toResponse(Comment comment) {
         User owner = comment.getOwner();
 
-        var ownerResponse = OwnerResponse.toResponse(owner);
+        var ownerResponse = UserResponse.toResponse(owner);
+
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
