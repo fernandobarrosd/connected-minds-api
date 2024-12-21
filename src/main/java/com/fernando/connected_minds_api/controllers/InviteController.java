@@ -12,7 +12,7 @@ import com.fernando.connected_minds_api.services.InviteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.fernando.connected_minds_api.documentation.InviteControllerDocumentation;
+import com.fernando.connected_minds_api.docs.InviteControllerDocumentation;
 import com.fernando.connected_minds_api.models.User;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.UUID;
