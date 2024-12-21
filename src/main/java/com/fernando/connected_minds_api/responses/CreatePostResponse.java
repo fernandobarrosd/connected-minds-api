@@ -1,10 +1,8 @@
 package com.fernando.connected_minds_api.responses;
 
 import java.util.UUID;
-
 import com.fernando.connected_minds_api.models.Post;
 import com.fernando.connected_minds_api.models.User;
-
 import lombok.Builder;
 import java.util.List;
 
@@ -18,13 +16,13 @@ public record CreatePostResponse(
         UUID locationID,
         List<String> locationMembersUsernames,
         UUID notificationID,
-        OwnerResponse owner) {
+        UserResponse owner) {
             
             
         public static CreatePostResponse toResponse(Post post, List<String> locationMembersUsernames, UUID notificationID) {
             User owner = post.getOwner();
 
-            OwnerResponse ownerResponse = OwnerResponse.toResponse(owner);
+            var ownerResponse = UserResponse.toResponse(owner);
 
             return CreatePostResponse.builder()
                     .id(post.getId())
