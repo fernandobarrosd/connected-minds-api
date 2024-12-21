@@ -1,6 +1,8 @@
 package com.fernando.connected_minds_api.controllers;
 
+import com.fernando.connected_minds_api.docs.CommunityControllerDocumentation;
 import com.fernando.connected_minds_api.models.User;
+import com.fernando.connected_minds_api.queryparams.PaginationQueryParams;
 import com.fernando.connected_minds_api.requests.CommunityRequest;
 import com.fernando.connected_minds_api.requests.GroupRequest;
 import com.fernando.connected_minds_api.responses.CommunityResponse;
@@ -18,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import com.fernando.connected_minds_api.requests.params.PaginationQueryParams;
 
 @RestController
 @RequestMapping("/communities")
 @RequiredArgsConstructor
-public class CommunityController {
+public class CommunityController implements CommunityControllerDocumentation {
     private final CommunityService communityService;
 
     @PostMapping
@@ -38,9 +39,9 @@ public class CommunityController {
     public ResponseEntity<GroupResponse> createGroup(
         @AuthenticationPrincipal User user,
         @RequestBody @Valid GroupRequest groupRequest,
-        @PathVariable @Valid String communityID) {
+        @PathVariable @Valid UUID communityID) {
             return ResponseEntity.created(null).body(
-                communityService.createGroup(user, groupRequest, UUID.fromString(communityID)));
+                communityService.createGroup(user, groupRequest, communityID));
 
         }
     @GetMapping("/{communityID}/groups")
