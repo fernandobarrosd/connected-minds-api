@@ -1,0 +1,20 @@
+springdoc:
+  swagger-ui:
+    path: /docs/ui
+  api-docs:
+    path: /docs
+spring:
+  application:
+      name: connected-minds-api
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    properties:
+      hibernate.format_sql: true
+    hibernate:
+      ddl-auto: update
+  security:
+    secret-key: secret
+    orign-url: ${ORIGN_URL}
