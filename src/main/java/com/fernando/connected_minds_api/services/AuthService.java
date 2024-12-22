@@ -11,8 +11,6 @@ import com.fernando.connected_minds_api.requests.RefreshTokenRequest;
 import com.fernando.connected_minds_api.requests.RegisterRequest;
 import com.fernando.connected_minds_api.responses.AuthResponse;
 import lombok.RequiredArgsConstructor;
-
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
