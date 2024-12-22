@@ -26,7 +26,6 @@ public class CacheManager {
         for (String key: CACHE.keySet()) {
             if (key.contains(characters)) {
                 CACHE.remove(key);
-                break;
             }
         }
     }
