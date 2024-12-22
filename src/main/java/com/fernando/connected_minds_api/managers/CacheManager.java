@@ -14,8 +14,9 @@ public class CacheManager {
         return (T) CACHE.get(key);
     }
 
-    public <T extends Object> void addCacheValue(String key, T data) {
-        CACHE.put(key, data);
+    @SuppressWarnings("unchecked")
+    public <T extends Object> T addCacheValue(String key, T data) {
+        return (T) CACHE.put(key, data);
     }
 
     public boolean hasCacheKey(String key) {
