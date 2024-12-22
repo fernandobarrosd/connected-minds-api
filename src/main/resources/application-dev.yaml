@@ -4,6 +4,10 @@ springdoc:
   api-docs:
     path: /docs
 spring:
+  sql:
+    init:
+      data-locations: classpath:data-dev.sql
+      mode: always
   application:
       name: connected-minds-api
   datasource:
@@ -11,6 +15,7 @@ spring:
     username: postgres
     password: postgres
   jpa:
+    defer-datasource-initialization: true
     show-sql: true
     properties:
       hibernate.format_sql: true
