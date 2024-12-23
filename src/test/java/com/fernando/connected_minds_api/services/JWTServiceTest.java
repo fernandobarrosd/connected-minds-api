@@ -64,7 +64,7 @@ public class JWTServiceTest {
         """.formatted(email, "Unit test", instant, instant, username, null, null, null);
 
         var user = new User(username, email, "password", 
-        LocalDate.now(), null, null, UserGenre.MALE);
+        LocalDate.now(), null, null, null, UserGenre.MALE);
         user.setBio(null);
         
 
