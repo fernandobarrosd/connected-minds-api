@@ -34,230 +34,221 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class AuthServiceTest {
-    @InjectMocks
-    private AuthService authService;
+        @InjectMocks
+        private AuthService authService;
 
-    @Mock
-    private UserRepository userRepository;
+        @Mock
+        private UserRepository userRepository;
 
-    @Mock
-    private ApplicationContext applicationContext;
+        @Mock
+        private ApplicationContext applicationContext;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+        @Mock
+        private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
+        @Mock
+        private AuthenticationManager authenticationManager;
 
-    @Mock
-    private JWTService jwtService;
+        @Mock
+        private JWTService jwtService;
 
-    private LocalDate localDate;
+        private LocalDate localDate;
 
-    private LoginRequest loginRequest;
+        private LoginRequest loginRequest;
 
-    private RegisterRequest registerRequest;
+        private RegisterRequest registerRequest;
 
-    @BeforeEach
-    public void setup() {
-        this.loginRequest = new LoginRequest(
-                "email@email.com",
-                "password");
-        this.registerRequest = new RegisterRequest(
-                "username",
-                "email@email.com",
-                "password123",
-                null,
-                null,
-                null,
-                "MALE",
-                "2004-12-20");
-        this.localDate = LocalDate.of(2024, 12, 20);
-    }
+        @BeforeEach
+        public void setup() {
+                this.loginRequest = new LoginRequest(
+                                "email@email.com",
+                                "password");
+                this.registerRequest = new RegisterRequest(
+                                "username",
+                                "email@email.com",
+                                "password123",
+                                null,
+                                null,
+                                null,
+                                "MALE",
+                                "2004-12-20");
+                this.localDate = LocalDate.of(2024, 12, 20);
+        }
 
-    @Test
-    public void shouldExecuteAuthenticateUserMethodAndReturnAuthResponse() {
-        LocalDate birthDate = LocalDate.of(2004, 12, 20);
-        Optional<String> jwtExpiresAt = Optional.of(
-                LocalDateTime.of(
-                        2024, 12, 20, 19, 25).toString());
-        String jwtToken = "jwt-token";
-        String refreshToken = "jwt-refresh-token";
-        UUID userID = UUID.fromString("d76ea812-8dd5-4d7e-848a-8d3f4c103742");
+        @Test
+        public void shouldExecuteAuthenticateUserMethodAndReturnAuthResponse() {
+                LocalDate birthDate = LocalDate.of(2004, 12, 20);
+                Optional<String> jwtExpiresAt = Optional.of(
+                                LocalDateTime.of(
+                                                2024, 12, 20, 19, 25).toString());
+                String jwtToken = "jwt-token";
+                String refreshToken = "jwt-refresh-token";
+                UUID userID = UUID.fromString("d76ea812-8dd5-4d7e-848a-8d3f4c103742");
 
-        Authentication auth = mock(Authentication.class);
+                Authentication auth = mock(Authentication.class);
 
-        User user = new User(
-                userID,
-                "username",
-                loginRequest.email(),
-                loginRequest.password(),
-                birthDate,
-                null,
-                null,
-                null,
-                UserGenre.MALE);
+                User user = new User(
+                                userID,
+                                "username",
+                                loginRequest.email(),
+                                loginRequest.password(),
+                                birthDate,
+                                null,
+                                null,
+                                null,
+                                UserGenre.MALE);
 
-        when(applicationContext.getBean(AuthenticationManager.class))
-                .thenReturn(authenticationManager);
+                when(applicationContext.getBean(AuthenticationManager.class))
+                                .thenReturn(authenticationManager);
 
-        when(auth.getPrincipal()).thenReturn(user);
+                when(auth.getPrincipal()).thenReturn(user);
 
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(auth);
+                when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                                .thenReturn(auth);
 
-        when(jwtService.generateJWT(user)).thenReturn(jwtToken);
+                when(jwtService.generateJWT(user)).thenReturn(jwtToken);
 
-        when(jwtService.generateRefreshToken(user.getId()))
-                .thenReturn(refreshToken);
+                when(jwtService.generateRefreshToken(user.getId()))
+                                .thenReturn(refreshToken);
 
-        when(jwtService.getExpiresAt(jwtToken)).thenReturn(jwtExpiresAt);
+                when(jwtService.getExpiresAt(jwtToken)).thenReturn(jwtExpiresAt);
 
-        AuthResponse authResponse = authService.authenticate(loginRequest);
+                AuthResponse authResponse = authService.authenticate(loginRequest);
 
-        assertNotNull(authResponse.id());
-        assertNotNull(authResponse.username());
-        assertNotNull(authResponse.token());
-        assertNotNull(authResponse.refreshToken());
-        assertNotNull(authResponse.tokenExpiresAt());
+                assertNotNull(authResponse.id());
+                assertNotNull(authResponse.username());
+                assertNotNull(authResponse.token());
+                assertNotNull(authResponse.refreshToken());
+                assertNotNull(authResponse.tokenExpiresAt());
 
-        assertNull(authResponse.bio());
-        assertNull(authResponse.photoURL());
-        assertNull(authResponse.bannerURL());
+                assertNull(authResponse.bio());
+                assertNull(authResponse.photoURL());
+                assertNull(authResponse.bannerURL());
 
-        assertEquals(user.getId(), authResponse.id());
-        assertEquals(user.getUsername(), authResponse.username());
-        assertEquals(jwtToken, authResponse.token());
-        assertEquals(refreshToken, authResponse.refreshToken());
-        assertEquals(jwtExpiresAt.get(), authResponse.tokenExpiresAt());
-    }
+                assertEquals(user.getId(), authResponse.id());
+                assertEquals(user.getUsername(), authResponse.username());
+                assertEquals(jwtToken, authResponse.token());
+                assertEquals(refreshToken, authResponse.refreshToken());
+                assertEquals(jwtExpiresAt.get(), authResponse.tokenExpiresAt());
+        }
 
-    @Test
-    public void shouldNotAuthenticateUserAndThrowsException() {
-        String exceptionMessage = "User is not exists";
+        @Test
+        public void shouldNotAuthenticateUserAndThrowsException() {
+                String exceptionMessage = "User is not exists";
 
-        when(applicationContext.getBean(AuthenticationManager.class))
-                .thenReturn(authenticationManager);
+                when(applicationContext.getBean(AuthenticationManager.class))
+                                .thenReturn(authenticationManager);
 
-        when(authenticationManager.authenticate(
-                any(UsernamePasswordAuthenticationToken.class))).thenThrow(BadCredentialsException.class);
+                when(authenticationManager.authenticate(
+                                any(UsernamePasswordAuthenticationToken.class)))
+                                .thenThrow(BadCredentialsException.class);
 
-        var exception = assertThrows(EntityNotFoundException.class, () -> {
-            authService.authenticate(loginRequest);
-        });
+                var exception = assertThrows(EntityNotFoundException.class, () -> {
+                        authService.authenticate(loginRequest);
+                });
 
-        assertNotNull(exception.getMessage());
+                assertNotNull(exception.getMessage());
 
-        assertEquals(exceptionMessage, exception.getMessage());
-
-    }
-
-    @Test
-    public void shouldExecuteRegisterUserAndReturnAuthResponse() {
-        try (MockedStatic<LocalDate> localDateMock = mockStatic(LocalDate.class,
-                CALLS_REAL_METHODS)) {
-            LocalDate birthDate = LocalDate.of(2004, 12, 20);
-            LocalDate localDate = LocalDate.of(2024, 12, 20);
-            Optional<String> jwtExpiresAt = Optional.of(
-                    LocalDateTime.of(
-                            2024, 12, 20, 19, 25).toString());
-            String jwtToken = "jwt-token";
-            String refreshToken = "jwt-refresh-token";
-            UUID userID = UUID.fromString("d76ea812-8dd5-4d7e-848a-8d3f4c103742");
-
-            User user = new User(
-                    userID,
-                    "username",
-                    loginRequest.email(),
-                    loginRequest.password(),
-                    birthDate,
-                    null,
-                    null,
-                    null,
-                    UserGenre.MALE);
-
-            localDateMock.when(() -> LocalDate.now()).thenReturn(localDate);
-
-            when(passwordEncoder.encode(any(String.class)))
-                    .thenReturn("password123-encoded");
-
-            when(userRepository.save(any(User.class))).thenReturn(user);
-
-            when(jwtService.generateJWT(any())).thenReturn(jwtToken);
-
-            when(jwtService.generateRefreshToken(any(UUID.class))).thenReturn(refreshToken);
-
-            when(jwtService.getExpiresAt(any(String.class))).thenReturn(jwtExpiresAt);
-
-            AuthResponse authResponse = authService.registerUser(registerRequest);
-
-            assertNotNull(authResponse.id());
-            assertNotNull(authResponse.username());
-            assertNotNull(authResponse.token());
-            assertNotNull(authResponse.refreshToken());
-            assertNotNull(authResponse.tokenExpiresAt());
-
-            assertNull(authResponse.bio());
-            assertNull(authResponse.photoURL());
-            assertNull(authResponse.bannerURL());
-
-            assertEquals(user.getId(), authResponse.id());
-            assertEquals(user.getUsername(), authResponse.username());
-            assertEquals(jwtToken, authResponse.token());
-            assertEquals(refreshToken, authResponse.refreshToken());
-            assertEquals(jwtExpiresAt.get(), authResponse.tokenExpiresAt());
+                assertEquals(exceptionMessage, exception.getMessage());
 
         }
-    }
 
-    @Test
-    public void shouldNotRegisterUserAndThrowsException() {
-        UUID userID = UUID.fromString("d76ea812-8dd5-4d7e-848a-8d3f4c103742");
-        LocalDate birthDate = LocalDate.of(2004, 12, 20);
-        String exceptionMessage = "User is already exists";
+        @Test
+        public void shouldExecuteRegisterUserAndReturnAuthResponse() {
+                try (MockedStatic<LocalDate> localDateMock = mockStatic(LocalDate.class,
+                                CALLS_REAL_METHODS)) {
+                        LocalDate birthDate = LocalDate.of(2004, 12, 20);
+                        LocalDate localDate = LocalDate.of(2024, 12, 20);
+                        Optional<String> jwtExpiresAt = Optional.of(
+                                        LocalDateTime.of(
+                                                        2024, 12, 20, 19, 25).toString());
+                        String jwtToken = "jwt-token";
+                        String refreshToken = "jwt-refresh-token";
+                        UUID userID = UUID.fromString("d76ea812-8dd5-4d7e-848a-8d3f4c103742");
 
-        User user = new User(
-                userID,
-                "username",
-                loginRequest.email(),
-                loginRequest.password(),
-                birthDate,
-                null,
-                null,
-                null,
-                UserGenre.MALE);
+                        User user = new User(
+                                        userID,
+                                        "username",
+                                        loginRequest.email(),
+                                        loginRequest.password(),
+                                        birthDate,
+                                        null,
+                                        null,
+                                        null,
+                                        UserGenre.MALE);
 
-        try (MockedStatic<LocalDate> localDateMock = mockStatic(LocalDate.class)) {
-            localDateMock.when(() -> LocalDate.now()).thenReturn(localDate);
+                        localDateMock.when(() -> LocalDate.now()).thenReturn(localDate);
 
-            when(passwordEncoder.encode(any(String.class)))
-                    .thenReturn("password123-encoded");
+                        when(passwordEncoder.encode(any(String.class)))
+                                        .thenReturn("password123-encoded");
 
-            when(userRepository.save(user)).thenThrow(new IllegalArgumentException());
+                        when(userRepository.save(any(User.class))).thenReturn(user);
 
-            var exception = assertThrows(EntityAlreadyExistsException.class,
-                    () -> authService.registerUser(registerRequest));
+                        when(jwtService.generateJWT(any())).thenReturn(jwtToken);
 
-            assertNotNull(exception.getMessage());
+                        when(jwtService.generateRefreshToken(any(UUID.class))).thenReturn(refreshToken);
 
-            assertEquals(exceptionMessage, exception.getMessage());
+                        when(jwtService.getExpiresAt(any(String.class))).thenReturn(jwtExpiresAt);
+
+                        AuthResponse authResponse = authService.registerUser(registerRequest);
+
+                        assertNotNull(authResponse.id());
+                        assertNotNull(authResponse.username());
+                        assertNotNull(authResponse.token());
+                        assertNotNull(authResponse.refreshToken());
+                        assertNotNull(authResponse.tokenExpiresAt());
+
+                        assertNull(authResponse.bio());
+                        assertNull(authResponse.photoURL());
+                        assertNull(authResponse.bannerURL());
+
+                        assertEquals(user.getId(), authResponse.id());
+                        assertEquals(user.getUsername(), authResponse.username());
+                        assertEquals(jwtToken, authResponse.token());
+                        assertEquals(refreshToken, authResponse.refreshToken());
+                        assertEquals(jwtExpiresAt.get(), authResponse.tokenExpiresAt());
+
+                }
+        }
+
+        @Test
+        public void shouldNotRegisterUserAndThrowsException() {
+                LocalDate birthDate = LocalDate.of(2004, 12, 20);
+                
+                String exceptionMessage = "User is already exists";
+
+                try (MockedStatic<LocalDate> localDateMock = mockStatic(LocalDate.class)) {
+                        localDateMock.when(() -> LocalDate.now()).thenReturn(localDate);
+                        localDateMock.when(() -> LocalDate.parse(registerRequest.birthDate())).thenReturn(birthDate);
+                        
+                        when(passwordEncoder.encode(any(String.class)))
+                                        .thenReturn("password123-encoded");
+
+                        when(userRepository.save(any(User.class))).thenThrow(IllegalArgumentException.class);
+
+                        var exception = assertThrows(EntityAlreadyExistsException.class,
+                                        () -> authService.registerUser(registerRequest));
+
+                        assertNotNull(exception.getMessage());
+
+                        assertEquals(exceptionMessage, exception.getMessage());
+
+                }
+        }
+
+        @Test
+        public void shouldNotRegisterUserWithAgeBellow13() {
 
         }
-    }
 
-    @Test
-    public void shouldNotRegisterUserWithAgeBellow13() {
+        @Test
+        public void shouldGenerateNewToken() {
 
-    }
+        }
 
-    @Test
-    public void shouldGenerateNewToken() {
+        @Test
+        public void shouldNotGenerateNewToken() {
 
-    }
-
-    @Test
-    public void shouldNotGenerateNewToken() {
-
-    }
+        }
 
 }

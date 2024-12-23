@@ -109,7 +109,6 @@ public class AuthService implements UserDetailsService {
         try {
             userSaved = userRepository.save(user);
         } catch (IllegalArgumentException exception) {
-            System.out.println(exception.getMessage());
             throw new EntityAlreadyExistsException("User is already exists");
         }
 
