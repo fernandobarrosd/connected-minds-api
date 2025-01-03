@@ -24,3 +24,8 @@ spring:
   security:
     secret-key: secret
     orign-url: http://localhost:3000
+  
+
+supabase:
+  jwt-key: zESCmM8KHNQoiLVXaLkAT9EXaNII8BLygSir1JtLoVFIUSQxY50ezIostmf6IYVHNV9jz+tln9sZ96FRknQ5OQ==
+  url: https://ixhwgwouajcjtswhwinq.supabase.co
