@@ -11,7 +11,7 @@ public record CreatePostResponse(
         UUID id,
         String content,
         String createdAt,
-        String photoURL,
+        MediaResponse media,
         Long likes,
         UUID locationID,
         List<String> locationMembersUsernames,
@@ -23,13 +23,14 @@ public record CreatePostResponse(
             User owner = post.getOwner();
 
             var ownerResponse = UserResponse.toResponse(owner);
+            var mediaResponse = MediaResponse.toResponse(post.getMedia());
 
             return CreatePostResponse.builder()
                     .id(post.getId())
                     .locationID(post.getLocationID())
                     .content(post.getContent())
                     .likes(post.getLikes().stream().count())
-                    .photoURL(post.getPhotoURL())
+                    .media(mediaResponse)
                     .createdAt(post.getCreatedAt().toString())
                     .owner(ownerResponse)
                     .locationMembersUsernames(locationMembersUsernames)
