@@ -58,6 +58,20 @@ public class JWTService {
         }
     }
 
+    public Optional<String> getSubject(String token) {
+        try {
+            String subject = JWT
+                    .require(HMAC256(jwtSecretKey))
+                    .build()
+                    .verify(token)
+                    .getSubject();
+            return Optional.of(subject);
+        }
+        catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     public Optional<String> getExpiresAt(String token) {
         try {
             Date expiresAt = JWT
