@@ -10,6 +10,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +44,10 @@ public class User implements UserDetails {
 
     private String bio;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserGenre genre;
+
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
@@ -52,8 +58,9 @@ public class User implements UserDetails {
         String photoURL, 
         String bannerURL, 
         String bio,
+        UserGenre genre,
         LocalDate birthDate) {
-        this(UUID.randomUUID(), username, email, password, photoURL, bannerURL, bio, birthDate);
+        this(UUID.randomUUID(), username, email, password, photoURL, bannerURL, bio, genre, birthDate);
     }
 
     @Override

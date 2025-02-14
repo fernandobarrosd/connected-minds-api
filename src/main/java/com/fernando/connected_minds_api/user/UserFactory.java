@@ -21,6 +21,7 @@ public final class UserFactory {
         String photoURL = faker.internet().image();
         String bannerURL = faker.internet().image();
         String bio = faker.lorem().characters();
+        UserGenre genre = UserGenre.MALE;
 
         return User.builder()
             .id(userID)
@@ -30,6 +31,7 @@ public final class UserFactory {
             .photoURL(photoURL)
             .bannerURL(bannerURL)
             .bio(bio)
+            .genre(genre)
             .birthDate(thirtyYearsOldBirthDate)
             .build();
 

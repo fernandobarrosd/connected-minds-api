@@ -1,7 +1,6 @@
 package com.fernando.connected_minds_api.user;
 
 import java.util.UUID;
-
 import lombok.Builder;
 
 @Builder
@@ -10,7 +9,8 @@ public record UserResponse(
     String username,
     String photoURL,
     String bannerURL,
-    String bio) {
+    String bio,
+    UserGenre genre) {
 
         public static UserResponse toResponse(User user) {
             return UserResponse.builder()
@@ -19,6 +19,7 @@ public record UserResponse(
                 .photoURL(user.getPhotoURL())
                 .bannerURL(user.getBannerURL())
                 .bio(user.getBio())
+                .genre(user.getGenre())
                 .build();
         }
     }
