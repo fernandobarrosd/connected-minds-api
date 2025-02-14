@@ -11,24 +11,27 @@ A API do projeto que eu estou desenvolvendo ou já desenvolvi chamada Connected 
 ### Publicações
 - Criar publicações
 - Editar uma publicação
--  Curtir uma publicação
--  Comentar em uma publicação
+- Curtir uma publicação
+- Comentar em uma publicação
 
 ### Comunidades
 - Criar comunidades
 - Procurar uma comunidade
 - Editar uma comunidade
 - Entrar em uma comunidade
+- Sair de uma comunidade
 
 
 ### Grupos
 - Criar um grupo em uma comunidade
 - Editar um grupo
 - Entrar em um grupo
+- Sair de um grupo
 
 
 ### Usuarios
 - Seguir outros usuários
+- Deixar de seguir outros usuários
 - Procurar um usuário
 
 
@@ -37,5 +40,5 @@ A API do projeto que eu estou desenvolvendo ou já desenvolvi chamada Connected 
 
 
 ### Notificações
-- Notificar o usuário quando um usuário cria um post, curti um post e seguiu.
-- Notificar o dono do grupo ou comunidade quando um usuário novo entrar.
+- Notificar o usuário quando um usuário criou um post, comentou em um post, curtiu um post, seguiu ou deixou de seguir
+- Notificar o dono do grupo ou comunidade quando um usuário novo entrou.
