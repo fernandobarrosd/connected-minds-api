@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record UserResponse(
-    UUID userID,
+    UUID userId,
     String username,
     String photoURL,
     String bannerURL,
@@ -14,7 +14,7 @@ public record UserResponse(
 
         public static UserResponse toResponse(User user) {
             return UserResponse.builder()
-                .userID(user.getId())
+                .userId(user.getId())
                 .username(user.getUsername())
                 .photoURL(user.getPhotoURL())
                 .bannerURL(user.getBannerURL())
