@@ -36,80 +36,67 @@ public class JWTFilter extends OncePerRequestFilter {
                 var errorResponseBuilder = ErrorResponse.builder()
                     .path(request.getRequestURI());
 
-                if (authorizationHeader == null) {
-                    var errorResponse = errorResponseBuilder
-                        .statusCode(HttpStatus.UNAUTHORIZED.value())
-                        .date(LocalDateTime.now())
-                        .message("This resource require Authorization header")
-                        .build();
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-                    response.getWriter().flush();
-                    response.getWriter().close();
-                    return;
-                }
-
-                if (!authorizationHeader.startsWith("Bearer")) {
-                    var errorResponse = errorResponseBuilder
-                        .statusCode(HttpStatus.UNAUTHORIZED.value())
-                        .date(LocalDateTime.now())
-                        .message("Authorization header must be starts with Bearer")
-                        .build();
-
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-                response.getWriter().flush();
-                response.getWriter().close();
-                return;
-
-                }
-
-                String token = authorizationHeader.replace("Bearer ", "");
-
-                if (!jwtService.isValidToken(token)) {
-                    var errorResponse = errorResponseBuilder
-                        .statusCode(HttpStatus.UNAUTHORIZED.value())
-                        .date(LocalDateTime.now())
-                        .message("JWT token is not valid")
-                        .build();
-
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-                    response.getWriter().flush();
-                    response.getWriter().close();
-                    return;
-                }
-
-                String email = jwtService.getSubject(token).get();
-                Optional<User> userOptional = userRepository.findByEmail(email);
-
-                if (userOptional.isEmpty()) {
-                    var errorResponse = errorResponseBuilder
+                if (authorizationHeader != null) {
+                    if (!authorizationHeader.startsWith("Bearer")) {
+                        var errorResponse = errorResponseBuilder
                             .statusCode(HttpStatus.UNAUTHORIZED.value())
                             .date(LocalDateTime.now())
-                            .message("User is not found")
+                            .message("Authorization header must be starts with Bearer")
                             .build();
+    
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
                     response.getWriter().flush();
                     response.getWriter().close();
                     return;
+    
+                    }
+    
+                    String token = authorizationHeader.replace("Bearer ", "");
+    
+                    if (!jwtService.isValidToken(token)) {
+                        var errorResponse = errorResponseBuilder
+                            .statusCode(HttpStatus.UNAUTHORIZED.value())
+                            .date(LocalDateTime.now())
+                            .message("JWT token is not valid")
+                            .build();
+    
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                        response.getWriter().flush();
+                        response.getWriter().close();
+                        return;
+                    }
+    
+                    String email = jwtService.getSubject(token).get();
+                    Optional<User> userOptional = userRepository.findByEmail(email);
+    
+                    if (userOptional.isEmpty()) {
+                        var errorResponse = errorResponseBuilder
+                                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                                .date(LocalDateTime.now())
+                                .message("User is not found")
+                                .build();
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                        response.getWriter().flush();
+                        response.getWriter().close();
+                        return;
+                    }
+    
+                    UserDetails user = userOptional.get();
+    
+                    var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
+                            user,
+                            null,
+                            user.getAuthorities()
+                    );
+    
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
                 }
-
-                UserDetails user = userOptional.get();
-
-                var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        user.getAuthorities()
-                );
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
-
                 filterChain.doFilter(request, response);
 
 
