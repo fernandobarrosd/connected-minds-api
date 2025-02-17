@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Entity
 @Table(name ="user_table")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
