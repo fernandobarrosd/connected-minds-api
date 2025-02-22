@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{username}")
+    @GetMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<UserResponse> findUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(userService.findUserByUsername(username));
     }
