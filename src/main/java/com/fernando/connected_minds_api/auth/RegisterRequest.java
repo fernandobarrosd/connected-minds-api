@@ -1,11 +1,15 @@
 package com.fernando.connected_minds_api.auth;
 
+import com.fernando.connected_minds_api.formatters.DateTimeFormatters;
+import com.fernando.connected_minds_api.validation.constraints.LocalDateFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import java.time.LocalDate;
+import java.util.UUID;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 import com.fernando.connected_minds_api.user.User;
@@ -18,7 +22,7 @@ public record RegisterRequest(
         @NotEmpty(message = "username field not should be empty")
         @Pattern(
             regexp = "[A-Za-z0-9_]+",
-            message = "username field must have lower case and upercase letters, numbers and include this characters: [_]")
+            message = "username field must have lower case and uppercase letters, numbers and include this characters: [_]")
         String username,
 
         @NotNull(message = "email field is required")
@@ -27,14 +31,8 @@ public record RegisterRequest(
 
         @NotNull(message = "password field is required")
         @NotEmpty(message = "password field not should be empty")
-        @Length(min = 6, message = "password field must be 6 characteres")
+        @Length(min = 6, message = "password field must be 6 characters")
         String password,
-
-        @URL(message = "photoURL field should be url")
-        String photoURL,
-
-        @URL(message = "bannerURL field should be url")
-        String bannerURL,
 
         String bio,
 
@@ -42,22 +40,22 @@ public record RegisterRequest(
         @Enum(value = {"MALE", "FEMALE"}, message = "genre field should be MALE or FEMALE")
         String genre,
 
-        @NotNull(message = "birthDate fied is required")
+        @NotNull(message = "birthDate field is required")
         @NotEmpty(message = "birthDate field not should be empty")
+        @LocalDateFormat(message = "birthDate should be pattern dd-mm-yyy (day, month, and year)")
         String birthDate) {
 
     public User toEntity() {
-        LocalDate birthDateFormatted = LocalDate.parse(birthDate);
+        LocalDate birthDateLocalDate = LocalDate.parse(birthDate, DateTimeFormatters.LOCAL_DATE_FORMATTER);
 
         return User.builder()
-            .username(username)
-            .email(email)
-            .password(password)
-            .photoURL(photoURL)
-            .bannerURL(bannerURL)
-            .bio(bio)
-            .genre(UserGenre.valueOf(genre))
-            .birthDate(birthDateFormatted)
-            .build();
+                .id(UUID.randomUUID())
+                .username(username)
+                .email(email)
+                .password(password)
+                .bio(bio)
+                .genre(UserGenre.valueOf(genre))
+                .birthDate(birthDateLocalDate)
+                .build();
     }
 }
