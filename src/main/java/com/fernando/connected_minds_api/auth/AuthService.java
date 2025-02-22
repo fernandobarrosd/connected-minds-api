@@ -1,5 +1,7 @@
 package com.fernando.connected_minds_api.auth;
 
+import com.fernando.connected_minds_api.avatar.AvatarService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class AuthService implements UserDetailsService {
     private final JWTService jwtService;
     private final UserRepository userRepository;
-    private final AuthenticationManager authManager;
+    private final ApplicationContext applicationContext;
     private final PasswordEncoder passwordEncoder;
-
+    private final AvatarService avatarService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -33,70 +35,73 @@ public class AuthService implements UserDetailsService {
     }
 
     public AuthResponse authenticate(LoginRequest loginRequest) {
+        AuthenticationManager authManager = applicationContext.getBean(AuthenticationManager.class);
+
         var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
                 loginRequest.email(),
-                loginRequest.password());
-
-        Authentication auth;
+                loginRequest.password()
+        );
 
         try {
-            auth = authManager.authenticate(usernamePasswordToken);
-        } catch (Exception exception) {
-            throw new EntityNotFoundException("User is not exists");
+            Authentication auth = authManager.authenticate(usernamePasswordToken);
+
+            User user = (User) auth.getPrincipal();
+            String token = jwtService.generateJWT(user);
+            String refreshToken = jwtService.generateRefreshToken(user.getId());
+            String tokenExpiresAt = jwtService.getExpiresAt(token).get();
+
+            return AuthResponse.builder()
+                    .token(token)
+                    .refreshToken(refreshToken)
+                    .tokenExpiresAt(tokenExpiresAt)
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .photoURL(user.getPhotoURL())
+                    .bio(user.getBio())
+                    .userGenre(user.getGenre())
+                    .build();
+        } catch (RuntimeException exception) {
+            throw new EntityNotFoundException("User is not found");
         }
-
-        User user = (User) auth.getPrincipal();
-        String token = jwtService.generateJWT(user);
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
-        String tokenExpiresAt = jwtService.getExpiresAt(token).get();
-
-        return AuthResponse.builder()
-            .token(token)
-            .refreshToken(refreshToken)
-            .tokenExpiresAt(tokenExpiresAt)
-            .userId(user.getId())
-            .username(user.getUsername())
-            .photoURL(user.getPhotoURL())
-            .bannerURL(user.getBannerURL())
-            .bio(user.getBio())
-            .build();
     }
 
-    public AuthResponse register(RegisterRequest registerRequest) {
+    public AuthResponse register(RegisterRequest registerRequest, String apiURL) {
         User user = registerRequest.toEntity();
+        boolean userIsExists = userRepository.existsByEmail(registerRequest.email());
 
-        User userSaved = null;
+        if (userIsExists) {
+            throw new EntityAlreadyExistsException("User is already exists");
+        }
 
-        Integer currentYear = LocalDate.now().getYear();
-        Integer birthYear = user.getBirthDate().getYear();
-        Integer age = currentYear - birthYear;
+        int currentYear = LocalDate.now().getYear();
+        int birthYear = user.getBirthDate().getYear();
+        int age = currentYear - birthYear;
 
         if (age < 13) {
-            throw new UnderAgeException("User age must be greather than or equal to 13 years old");
+            throw new UnderAgeException("User age must be greater than or equal that 13 years old");
         }
+        String avatar = avatarService.generateAvatarFromUserGenre(user.getGenre());
+        String photoURL = "%s/avatars/%s".formatted(apiURL, avatar);
+        user.setPhotoURL(photoURL);
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        try {
-            userSaved = userRepository.save(user);
-        } catch (IllegalArgumentException exception) {
-            throw new EntityAlreadyExistsException("User is already exists");
-        }
+        User userSaved = userRepository.save(user);
 
-        String token = jwtService.generateJWT(user);
+        String token = jwtService.generateJWT(userSaved);
         String refreshToken = jwtService.generateRefreshToken(userSaved.getId());
         String tokenExpiresAt = jwtService.getExpiresAt(token).get();
 
         return AuthResponse.builder()
-            .token(token)
-            .refreshToken(refreshToken)
-            .tokenExpiresAt(tokenExpiresAt)
-            .userId(user.getId())
-            .username(user.getUsername())
-            .photoURL(user.getPhotoURL())
-            .bannerURL(user.getBannerURL())
-            .bio(user.getBio())
-            .build();
+                .token(token)
+                .refreshToken(refreshToken)
+                .tokenExpiresAt(tokenExpiresAt)
+                .userId(userSaved.getId())
+                .username(userSaved.getUsername())
+                .photoURL(user.getPhotoURL())
+                .bio(userSaved.getBio())
+                .userGenre(userSaved.getGenre())
+                .build();
     }
 }
