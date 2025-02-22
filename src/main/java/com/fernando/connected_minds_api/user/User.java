@@ -41,9 +41,6 @@ public class User implements UserDetails {
     @Column(name = "photo_url")
     private String photoURL;
 
-    @Column(name = "banner_url")
-    private String bannerURL;
-
     private String bio;
 
     @Column(nullable = false)
@@ -57,12 +54,11 @@ public class User implements UserDetails {
         String username, 
         String email, 
         String password, 
-        String photoURL, 
-        String bannerURL, 
+        String photoURL,
         String bio,
         UserGenre genre,
         LocalDate birthDate) {
-        this(UUID.randomUUID(), username, email, password, photoURL, bannerURL, bio, genre, birthDate);
+        this(UUID.randomUUID(), username, email, password, photoURL, bio, genre, birthDate);
     }
 
     @Override
