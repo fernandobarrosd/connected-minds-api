@@ -8,11 +8,11 @@ import java.util.Map;
 
 @Getter
 public class ValidationErrorResponse extends ErrorResponse {
-    private final List<Map<String, String>> fields;
+    private final List<ValidationErrorField> fields;
 
 
     public ValidationErrorResponse(String message, String path, Integer statusCode, LocalDateTime date,
-                                   List<Map<String, String>> fields) {
+                                   List<ValidationErrorField> fields) {
         super(message, path, statusCode, date);
         this.fields = fields;
     }
@@ -22,7 +22,7 @@ public class ValidationErrorResponse extends ErrorResponse {
     }
 
     public static class ValidationErrorResponseBuilder {
-        private List<Map<String, String>> fields;
+        private List<ValidationErrorField> fields;
         private String message;
         private String path;
         private Integer statusCode;
@@ -47,7 +47,7 @@ public class ValidationErrorResponse extends ErrorResponse {
             return this;
         }
 
-        public ValidationErrorResponseBuilder fields(List<Map<String, String>> fields) {
+        public ValidationErrorResponseBuilder fields(List<ValidationErrorField> fields) {
             this.fields = fields;
             return this;
         }
