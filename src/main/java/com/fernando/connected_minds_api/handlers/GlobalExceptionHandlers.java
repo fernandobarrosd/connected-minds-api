@@ -2,8 +2,8 @@ package com.fernando.connected_minds_api.handlers;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.fernando.connected_minds_api.error.ValidationErrorField;
+import com.fernando.connected_minds_api.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,13 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fernando.connected_minds_api.error.ErrorResponse;
 import com.fernando.connected_minds_api.error.ValidationErrorResponse;
-import com.fernando.connected_minds_api.exceptions.CannotLikeTheOwnPostException;
-import com.fernando.connected_minds_api.exceptions.EntityAlreadyExistsException;
-import com.fernando.connected_minds_api.exceptions.EntityNotFoundException;
-import com.fernando.connected_minds_api.exceptions.JWTTokenInvalidException;
-import com.fernando.connected_minds_api.exceptions.UnderAgeException;
-import com.fernando.connected_minds_api.exceptions.UserIsAlreadyExiststInCommunityOrGroupException;
-import com.fernando.connected_minds_api.exceptions.UserIsNotOwnerOfResourceException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -37,6 +30,20 @@ public class GlobalExceptionHandlers {
                                 .path(request.getRequestURI())
                                 .date(LocalDateTime.now())
                                 .build();
+                return ResponseEntity.status(statusCode).body(errorResponse);
+        }
+
+        @ExceptionHandler(FileNotExistsException.class)
+        public ResponseEntity<ErrorResponse> handleFileNotExists(
+                FileNotExistsException exception,
+                HttpServletRequest request) {
+                int statusCode = HttpStatus.NOT_FOUND.value();
+                ErrorResponse errorResponse = ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .statusCode(statusCode)
+                        .path(request.getRequestURI())
+                        .date(LocalDateTime.now())
+                        .build();
                 return ResponseEntity.status(statusCode).body(errorResponse);
         }
 
@@ -86,7 +93,7 @@ public class GlobalExceptionHandlers {
         }
 
         @ExceptionHandler(UserIsAlreadyExiststInCommunityOrGroupException.class)
-        public ResponseEntity<ErrorResponse> handleUserIsAlreadyExiststInCommunityOrGroup(
+        public ResponseEntity<ErrorResponse> handleUserIsAlreadyExistsInCommunityOrGroup(
                         UserIsAlreadyExiststInCommunityOrGroupException exception,
                         HttpServletRequest request) {
 
@@ -169,13 +176,13 @@ public class GlobalExceptionHandlers {
                         MethodArgumentNotValidException exception,
                         HttpServletRequest request) {
                 int statusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
-                List<Map<String, String>> fields = exception.getFieldErrors()
+                List<ValidationErrorField> fields = exception.getFieldErrors()
                                 .stream()
                                 .map(this::convertToMapField)
                                 .toList();
 
                 var errorResponse = ValidationErrorResponse.validationErrorResponseBuilder()
-                                .message("Validation failed")
+                                .message("Validation error")
                                 .statusCode(statusCode)
                                 .path(request.getRequestURI())
                                 .date(LocalDateTime.now())
@@ -185,9 +192,10 @@ public class GlobalExceptionHandlers {
                 return ResponseEntity.unprocessableEntity().body(errorResponse);
         }
 
-        private Map<String, String> convertToMapField(FieldError fieldError) {
-                return Map.of(
-                                "field", fieldError.getField(),
-                                "errorMessage", Objects.requireNonNull(fieldError.getDefaultMessage()));
+        private ValidationErrorField convertToMapField(FieldError fieldError) {
+                return ValidationErrorField.builder()
+                        .field(fieldError.getField())
+                        .message(fieldError.getDefaultMessage())
+                        .build();
         }
 }
