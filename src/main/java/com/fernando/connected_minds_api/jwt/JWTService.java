@@ -27,7 +27,6 @@ public class JWTService {
                 .create()
                 .withSubject(user.getEmail())
                 .withClaim("profile_url", user.getPhotoURL())
-                .withClaim("banner_url", user.getBannerURL())
                 .withClaim("username", user.getUsername())
                 .withClaim("bio", user.getBio())
                 .withIssuer(ISSUER)
