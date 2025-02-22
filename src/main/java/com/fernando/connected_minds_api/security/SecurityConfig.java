@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,  "/auth/login", "/auth/register", "/auth/token", 
                         "/h2-console", "/h2-console/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/ws/**", "/h2-console", "/h2-console/**", "/docs/**", "/users/**", "/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ws/**", "/h2-console", "/h2-console/**", "/docs/**", "/users/**", "/search", "/avatars/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/token").permitAll()
                         .anyRequest().authenticated()
                 )
