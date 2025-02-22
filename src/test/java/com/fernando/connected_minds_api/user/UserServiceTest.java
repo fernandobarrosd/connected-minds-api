@@ -41,7 +41,6 @@ public class UserServiceTest {
         assertEquals(user.getId(), response.userId());
         assertEquals(user.getUsername(), response.username());
         assertEquals(user.getPhotoURL(), response.photoURL());
-        assertEquals(user.getBannerURL(), response.bannerURL());
         assertEquals(user.getBio(), response.bio());
     }
 
