@@ -17,7 +17,6 @@ public record UserResponse(
                 .userId(user.getId())
                 .username(user.getUsername())
                 .photoURL(user.getPhotoURL())
-                .bannerURL(user.getBannerURL())
                 .bio(user.getBio())
                 .genre(user.getGenre())
                 .build();
