@@ -1,10 +1,12 @@
 package com.fernando.connected_minds_api.auth;
 
+import lombok.Builder;
 import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@Builder
 public record LoginRequest(
         @NotNull(message = "email field is required")
         @Email(message = "E-mail is not valid")
