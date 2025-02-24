@@ -1,5 +1,5 @@
 ### Autenticação
-- [ ] Se autenticar na rede social
+- [X] Se autenticar na rede social
 
 ### Publicações
 - [ ] Criar publicações
