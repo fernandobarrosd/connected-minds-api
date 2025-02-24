@@ -2,9 +2,10 @@ package com.fernando.connected_minds_api.avatar;
 
 import com.fernando.connected_minds_api.exceptions.FileNotExistsException;
 import com.fernando.connected_minds_api.user.UserGenre;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -43,20 +44,17 @@ public class AvatarService {
         }
     }
 
-    public byte[] findAvatarFileByName(String avatarFileName) {
+    public Resource findAvatarFileByName(String avatarFileName) throws Exception {
         String avatarFilePath = avatarFileName.contains("male") ?
                 "avatars/male/%s" : "avatars/female/%s";
         ClassLoader classLoader = getClass().getClassLoader();
 
-        String avatarFilePath2 = avatarFilePath.formatted(avatarFileName);
+        URL avatarURL = classLoader.getResource(avatarFilePath.formatted(avatarFileName));
 
-
-        try(InputStream avatarFileInputStream = classLoader.getResourceAsStream(avatarFilePath2)) {
-            if (avatarFileInputStream == null) return null;
-
-            return avatarFileInputStream.readAllBytes();
-        } catch (Exception e) {
+        if (avatarURL == null) {
             throw new FileNotExistsException("Avatar file name is not found");
         }
+
+        return new UrlResource(avatarURL.toURI());
     }
 }
