@@ -1,5 +1,5 @@
 ### Autenticação
-- [X] Se autenticar na rede social
+- [ ] Se autenticar na rede social
 
 ### Publicações
 - [ ] Criar publicações
@@ -25,7 +25,7 @@
 ### Usuarios
 - [ ] Seguir outros usuários
 - [ ] Deixar de seguir outros usuários
-- [ ] Procurar um usuário
+- [X] Procurar um usuário
 
 
 ### Convites
