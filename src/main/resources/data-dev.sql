@@ -1,0 +1,6 @@
+INSERT INTO user_table (user_id, username, email, user_password, photo_url, bio, genre, birth_date) VALUES
+  ('e96fb6fb-1f55-4fba-a6c3-c079f7a012fe', 'fernandobarrosd', 'fbarros@email.com', 'W$2y$10$j.UbQzRvoy1X0mOXCwFGju0Z1cQj6gDdUTQfV0Dfg3xKVBFRvUVy', NULL, NULL, 'MALE', '2004-10-09'),
+  ('8d8c2e9d-1d5a-4c57-9e2f-1f8b4c2d6fcb', 'john_doe', 'john_doe@email.com', '$2y$10$DYy3V.iirT7aXtwqMG3e6ObIjYd4/slq3UbquSd69xfkLj3ET6MIe', NULL, NULL, 'MALE', '1995-05-20'),
+  ('c2f462d8-7b92-46c3-9f38-d0b3f88e5c01', 'jane_smith', 'jane_smith@email.com', '$2y$10$DYy3V.iirT7aXtwqMG3e6ObIjYd4/slq3UbquSd69xfkLj3ET6MIe', NULL, NULL, 'FEMALE', '1993-04-15'),
+  ('b4d3a8e7-f77b-4e49-b0b9-6b8d5e438f57', 'michael_brown', 'michael_brown@email.com', '$2y$10$DYy3V.iirT7aXtwqMG3e6ObIjYd4/slq3UbquSd69xfkLj3ET6MIe', NULL, NULL, 'MALE', '2000-11-10'),
+  ('1a4e35d2-9859-435e-9e9a-24b92864e2cf', 'emily_davis', 'emily_davis@email.com', '$2y$10$DYy3V.iirT7aXtwqMG3e6ObIjYd4/slq3UbquSd69xfkLj3ET6MIe', NULL, NULL, 'FEMALE', '1998-08-25');

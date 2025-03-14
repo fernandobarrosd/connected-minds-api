@@ -4,10 +4,6 @@ springdoc:
   api-docs:
     path: /docs
 spring:
-  sql:
-    init:
-      data-locations: classpath:data-dev.sql
-      mode: always
   application:
     name: connected-minds-api
   datasource:
@@ -16,7 +12,6 @@ spring:
     password: sa
     driver-class-name: org.h2.Driver
   jpa:
-    defer-datasource-initialization: true
     show-sql: true
     properties:
       hibernate.format_sql: true
@@ -25,3 +20,4 @@ spring:
   security:
     secret-key: secret
     origin-url: http://localhost:3000
+  api-url: http://localhost:8080
